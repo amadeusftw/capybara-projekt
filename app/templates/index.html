@@ -1,13 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div style="margin:10px;">{{ form.first_name(placeholder="FÖRNAMN", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
-    <div style="margin:10px;">{{ form.last_name(placeholder="EFTERNAMN", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
-    <div style="margin:10px;">{{ form.email(placeholder="E-POST", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
-    <div style="margin:10px;">{{ form.company(placeholder="FÖRETAG", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
-    <div style="margin:10px;">{{ form.title(placeholder="TITEL", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
-    {{ form.submit(style="width:100%;padding:10px;background:#00ffcc;font-weight:bold;cursor:pointer;") }}
-</form>
-<a href="/login" style="color:#555;display:block;text-align:center;margin-top:20px;">SYS_ADMIN</a>
+<div class="container">
+    <h1>CM CORP 🥔</h1>
+    <h2>Världsledande inom Capybara Excellence</h2>
+    
+    {% with m=get_flashed_messages(with_categories=true) %}
+        {% if m %}<div class="flash">{{ m[0][1] }}</div>{% endif %}
+    {% endwith %}
+
+    <div style="text-align: left; margin-bottom: 30px;">
+        <p><strong>Vilka är vi?</strong><br>
+        CM Corp är ett mycket seriöst företag. Vi ägnar oss inte åt aktier, fastigheter eller krypto. Vi ägnar oss uteslutande åt <em>Hydrochoerus hydrochaeris</em> – det majestätiska vattensvinet.</p>
+        
+        <p><strong>Varför registrera sig?</strong><br>
+        Fyller du i formuläret nedan får du exklusiv tillgång till vårt nyhetsbrev. Det innehåller allt från "Veckans Vattensvin" till tips på hur man bäst kliar en Capybara bakom örat.</p>
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.first_name(placeholder="Ditt förnamn") }}
+        {{ form.last_name(placeholder="Ditt efternamn") }}
+        {{ form.email(placeholder="Din bästa e-post") }}
+        {{ form.company(placeholder="Ditt företag (eller Capybara-klubb)") }}
+        {{ form.title(placeholder="Din titel (t.ex. Gnagare-entusiast)") }}
+
+        <div class="gdpr-container">
+            <span class="gdpr-tooltip">Genom att du klickar i denna rutan så godkänner du att CM Corp äger dina uppgifter i all evig framtid.</span>
+            {{ form.gdpr() }} <label for="gdpr" style="cursor:help;">Jag godkänner villkoren (Håll musen här!)</label>
+        </div>
+
+        {{ form.submit() }}
+    </form>
+    
+    <a href="/login" style="display:block; margin-top:20px; color:#aaa; font-size:0.8rem;">Admin Login</a>
+</div>
+
+<div class="footer">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
+    <div>
+        <strong>All rights reserved © CM Corp</strong><br>
+        Publicerad: 2026-01-22
+    </div>
+</div>
 {% endblock %}

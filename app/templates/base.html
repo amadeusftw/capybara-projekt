@@ -1,12 +1,115 @@
 <!doctype html>
-<html style="background:#050505;color:#e0e0e0;font-family:monospace;height:100%;">
-<head><title>CM CORP</title></head>
-<body style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;">
-    <h1 style="color:#00ffcc;font-size:3rem;text-shadow:0 0 10px #00ffcc;">CM CORP</h1>
-    {% with m=get_flashed_messages(with_categories=true) %}
-        {% if m %}<div style="border:1px solid #fff;padding:10px;margin-bottom:20px;">{{ m[0][1] }}</div>{% endif %}
-    {% endwith %}
-    <div style="border:1px solid #333;padding:40px;background:#111;box-shadow:0 0 20px rgba(0,255,204,0.1);">
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <title>CM Corp - Capybara Experts</title>
+    <style>
+        /* Bakgrundsbild på Capybara från Unsplash */
+        body {
+            background: url('https://images.unsplash.com/photo-1547638375-ebf04735d96d?q=80&w=2574&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Comic Sans MS', 'Verdana', sans-serif; /* Lekfullt typsnitt */
+            margin: 0;
+            padding: 0;
+            color: #333;
+            /* Muspekare: En liten Capybara-ikon om webbläsaren stöder det */
+            cursor: url('https://cdn-icons-png.flaticon.com/32/1998/1998610.png'), auto;
+        }
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.85); /* Ljus overlay så texten syns */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 50px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 5px solid #8BC34A; /* Capybara-grön ram */
+        }
+        h1 { color: #558B2F; font-size: 3rem; margin-bottom: 10px; }
+        h2 { color: #FF9800; }
+        p { font-size: 1.1rem; line-height: 1.6; }
+        
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #AED581;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        button, input[type="submit"] {
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover, input[type="submit"]:hover {
+            transform: scale(1.05);
+            background-color: #F57C00;
+        }
+
+        /* GDPR Tooltip & Styling */
+        .gdpr-container {
+            margin: 20px 0;
+            position: relative;
+            display: inline-block;
+        }
+        .gdpr-tooltip {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Placera ovanför */
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+        .gdpr-container:hover .gdpr-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .flash { background: #DCEDC8; color: #33691E; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        
+        .footer {
+            margin-top: 50px;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .footer img {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
         {% block content %}{% endblock %}
     </div>
-</body></html>
+</body>
+</html>
