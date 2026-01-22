@@ -1,16 +1,16 @@
 import os
 
-print("### BYGGER OM MED NY ADMIN-DESIGN & FILTRERING... ###")
+print("### LÄGGER TILL STRÄNG VALIDERING I CM CORP... ###")
 
 # 1. Säkerställ att mappar finns
 os.makedirs("app/static", exist_ok=True)
 os.makedirs("app/templates", exist_ok=True)
 
-# 2. Skapa requirements.txt (Samma som förut)
+# 2. Skapa requirements.txt
 with open("requirements.txt", "w", encoding="utf-8") as f:
     f.write("Flask==3.0.0\nFlask-SQLAlchemy==3.1.1\nFlask-WTF==1.2.1\nFlask-Login==0.6.3\nemail_validator\ngunicorn")
 
-# 3. Skapa app.py (NU MED SÖK-LOGIK I ADMIN)
+# 3. Skapa app.py (NU MED SKARPA REGLER & FELMEDDELANDEN)
 app_code = """import os
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, flash, request
@@ -45,13 +45,21 @@ class User(UserMixin):
 def load_user(id):
     return User()
 
+# HÄR ÄR ÄNDRINGEN: Custom messages för validering
 class RegForm(FlaskForm):
-    first_name = StringField('Förnamn', validators=[DataRequired()])
-    last_name = StringField('Efternamn', validators=[DataRequired()])
-    email = StringField('E-post', validators=[DataRequired(), Email()])
-    company = StringField('Företag', validators=[DataRequired()])
-    title = StringField('Titel', validators=[DataRequired()])
-    gdpr = BooleanField('GDPR', validators=[DataRequired()])
+    first_name = StringField('Förnamn', validators=[DataRequired(message="Du måste fylla i ditt förnamn!")])
+    last_name = StringField('Efternamn', validators=[DataRequired(message="Du måste fylla i ditt efternamn!")])
+    
+    # Validering för E-post och @-tecken
+    email = StringField('E-post', validators=[
+        DataRequired(message="E-post är obligatoriskt!"),
+        Email(message="Ogiltig e-post! Har du glömt @-tecknet?")
+    ])
+    
+    company = StringField('Företag', validators=[DataRequired(message="Vilket företag jobbar du på?")])
+    title = StringField('Titel', validators=[DataRequired(message="Vad är din titel?")])
+    
+    gdpr = BooleanField('GDPR', validators=[DataRequired(message="Du måste godkänna att vi äger din själ (GDPR)!")])
     submit = SubmitField('JAG VILL VARA MED!')
 
 @app.route('/', methods=['GET','POST'])
@@ -72,6 +80,14 @@ def index():
             db.session.commit()
             flash('Välkommen till Capybara-familjen! 🐾', 'success')
             return redirect(url_for('index'))
+    
+    # HÄR ÄR ÄNDRINGEN: Fånga upp fel om formuläret inte är giltigt
+    elif request.method == 'POST':
+        for field, errors in form.errors.items():
+            for error in errors:
+                # Visa felet för användaren
+                flash(error, 'warning')
+
     return render_template('index.html', form=form)
 
 @app.route('/login', methods=['GET','POST'])
@@ -92,10 +108,8 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    # HÄR ÄR FILTRERINGS-LOGIKEN
     search_query = request.args.get('q')
     if search_query:
-        # Sök i förnamn, efternamn, email eller företag
         term = f"%{search_query}%"
         subs = Subscriber.query.filter(
             (Subscriber.first_name.like(term)) | 
@@ -124,7 +138,7 @@ if __name__ == '__main__':
 """
 with open("app/app.py", "w", encoding="utf-8") as f: f.write(app_code)
 
-# 4. Skapa base.html (Uppdaterad CSS för Tabeller och Admin)
+# 4. Skapa base.html (Oförändrad design)
 base_html = """<!doctype html>
 <html lang="sv">
 <head>
@@ -132,7 +146,6 @@ base_html = """<!doctype html>
     <title>CM Corp - Capybara Magic</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* GLOBAL STYLING & MUSPEKARE */
         body { 
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); 
             font-family: "Nunito", sans-serif; 
@@ -144,54 +157,34 @@ base_html = """<!doctype html>
             align-items: flex-start;
             cursor: url('/static/cursor.png'), auto; 
         }
-
         .container { background-color: rgba(255, 255, 255, 0.95); width: 100%; max-width: 950px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 40px; margin-top: 20px; border: 6px solid #fff; text-align: center; }
-        
-        /* SPECIFIKT FÖR ADMIN-SIDAN (Gör den bredare) */
         .container-admin { max-width: 1200px; }
-
         h1 { font-family: "Fredoka", sans-serif; color: #FF6B6B; font-size: 4rem; margin: 0; text-shadow: 3px 3px 0px #ffeaa7; letter-spacing: 2px; }
         h2 { font-family: "Fredoka", sans-serif; color: #4ECDC4; font-size: 1.8rem; margin-top: 5px; margin-bottom: 40px; }
-        
         .grid-layout { display: flex; flex-wrap: wrap; gap: 40px; text-align: left; align-items: start; }
         .info-col { flex: 1; min-width: 300px; }
         .form-col { flex: 1; min-width: 300px; background: #fff9f0; padding: 30px; border-radius: 25px; border: 4px solid #ffeaa7; box-shadow: 0 10px 20px rgba(255, 234, 167, 0.3); }
-        
         .capy-pic { width: 100%; border-radius: 20px; border: 5px solid #4ECDC4; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(78, 205, 196, 0.2); transition: transform 0.3s; }
         .capy-pic:hover { transform: scale(1.02) rotate(1deg); }
-        
         input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; font-family: "Nunito", sans-serif; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
         input:focus { border-color: #FF6B6B; outline: none; background: #fff5f5; }
-        
         .btn-submit { background-color: #FF6B6B; color: white; border: none; padding: 15px; width: 100%; font-size: 1.3rem; font-family: "Fredoka", sans-serif; border-radius: 50px; cursor: pointer; border-bottom: 6px solid #c0392b; margin-top: 20px; transition: 0.1s; }
         .btn-submit:active { transform: translateY(4px); border-bottom: 2px solid #c0392b; }
-        
-        /* TABELL-DESIGN FÖR ADMIN */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         th { text-align: left; padding: 18px; background: #4ECDC4; color: white; font-family: "Fredoka", sans-serif; font-size: 1.1rem; }
         td { padding: 15px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle; text-align: left; }
         tr:last-child td { border-bottom: none; }
         tr:hover { background-color: #f9f9f9; }
-
-        /* SÖKRUTA DESIGN */
         .search-box { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .search-input { width: 60%; padding: 12px; border: 2px solid #ddd; border-radius: 50px; font-size: 1rem; }
         .search-btn { background: #555; color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; }
-
-        /* GDPR POP-UP */
         .gdpr-box { position: relative; margin-top: 15px; display: inline-block; }
         .gdpr-label { cursor: help; font-weight: bold; color: #555; text-decoration: underline; text-decoration-style: dotted; }
-        .gdpr-popup-text {
-            visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 10px;
-            position: absolute; z-index: 100; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.8rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
+        .gdpr-popup-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 10px; position: absolute; z-index: 100; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .gdpr-popup-text::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent; }
         .gdpr-box:hover .gdpr-popup-text { visibility: visible; opacity: 1; }
-
         .footer { margin-top: 60px; color: #999; font-size: 0.9rem; }
         .footer img { height: 60px; display: block; margin: 0 auto 15px auto; opacity: 0.8; }
-        
         .flash { background: #d4edda; color: #155724; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
         .flash.warning { background: #fff3cd; color: #856404; border-color: #ffeeba; }
     </style>
@@ -202,7 +195,7 @@ base_html = """<!doctype html>
 </html>"""
 with open("app/templates/base.html", "w", encoding="utf-8") as f: f.write(base_html)
 
-# 5. Skapa index.html (Oförändrad, med GIF och Text)
+# 5. Skapa index.html (Oförändrad design)
 index_html = """{% extends "base.html" %}
 {% block content %}
 <div class="container">
@@ -279,7 +272,7 @@ login_html = """{% extends "base.html" %}
 {% endblock %}"""
 with open("app/templates/login.html", "w", encoding="utf-8") as f: f.write(login_html)
 
-# 7. Skapa admin.html (HELT NY DESIGN + FILTRERING)
+# 7. Skapa admin.html (Oförändrad med filtrering)
 admin_html = """{% extends "base.html" %}
 {% block content %}
 <div class="container container-admin">
@@ -340,4 +333,4 @@ admin_html = """{% extends "base.html" %}
 {% endblock %}"""
 with open("app/templates/admin.html", "w", encoding="utf-8") as f: f.write(admin_html)
 
-print("### KLART! Admin-sidan är nu rak, snygg och sökbar! ###")
+print("### KLART! Alla fält är nu OBLIGATORISKA och @-tecken krävs. ###")

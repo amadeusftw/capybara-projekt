@@ -32,13 +32,21 @@ class User(UserMixin):
 def load_user(id):
     return User()
 
+# HÄR ÄR ÄNDRINGEN: Custom messages för validering
 class RegForm(FlaskForm):
-    first_name = StringField('Förnamn', validators=[DataRequired()])
-    last_name = StringField('Efternamn', validators=[DataRequired()])
-    email = StringField('E-post', validators=[DataRequired(), Email()])
-    company = StringField('Företag', validators=[DataRequired()])
-    title = StringField('Titel', validators=[DataRequired()])
-    gdpr = BooleanField('GDPR', validators=[DataRequired()])
+    first_name = StringField('Förnamn', validators=[DataRequired(message="Du måste fylla i ditt förnamn!")])
+    last_name = StringField('Efternamn', validators=[DataRequired(message="Du måste fylla i ditt efternamn!")])
+    
+    # Validering för E-post och @-tecken
+    email = StringField('E-post', validators=[
+        DataRequired(message="E-post är obligatoriskt!"),
+        Email(message="Ogiltig e-post! Har du glömt @-tecknet?")
+    ])
+    
+    company = StringField('Företag', validators=[DataRequired(message="Vilket företag jobbar du på?")])
+    title = StringField('Titel', validators=[DataRequired(message="Vad är din titel?")])
+    
+    gdpr = BooleanField('GDPR', validators=[DataRequired(message="Du måste godkänna att vi äger din själ (GDPR)!")])
     submit = SubmitField('JAG VILL VARA MED!')
 
 @app.route('/', methods=['GET','POST'])
@@ -59,6 +67,14 @@ def index():
             db.session.commit()
             flash('Välkommen till Capybara-familjen! 🐾', 'success')
             return redirect(url_for('index'))
+    
+    # HÄR ÄR ÄNDRINGEN: Fånga upp fel om formuläret inte är giltigt
+    elif request.method == 'POST':
+        for field, errors in form.errors.items():
+            for error in errors:
+                # Visa felet för användaren
+                flash(error, 'warning')
+
     return render_template('index.html', form=form)
 
 @app.route('/login', methods=['GET','POST'])
@@ -79,10 +95,8 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    # HÄR ÄR FILTRERINGS-LOGIKEN
     search_query = request.args.get('q')
     if search_query:
-        # Sök i förnamn, efternamn, email eller företag
         term = f"%{search_query}%"
         subs = Subscriber.query.filter(
             (Subscriber.first_name.like(term)) | 
