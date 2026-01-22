@@ -2,54 +2,55 @@
 {% block content %}
 <div class="container">
     <h1>CM CORP</h1>
-    <h2>Världens Ledande Marsvins-Experter</h2>
+    <h2>✨ Världens Ledande Marsvins-Experter ✨</h2>
     
-    {% with m=get_flashed_messages(with_categories=true) %}
-        {% if m %}<div class="flash">{{ m[0][1] }}</div>{% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
     {% endwith %}
 
     <div class="grid-layout">
         <div class="info-col">
-            <h3 style="color:#4ECDC4; margin-top:0;">Om CM Corp</h3>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Capybara_%28Hydrochoerus_hydrochaeris%29.JPG" alt="Capybara" class="capy-pic">
-            
-            <p>Vi är ett oerhört seriöst företag. Vi sysslar inte med tråkiga saker som ekonomi. Vi sysslar med <strong>Capybaras</strong> (Vattensvin).</p>
-            <p>Genom att fylla i formuläret här bredvid anmäler du dig till vårt exklusiva <strong>NYHETSBREV</strong>.</p>
-            <p><strong>Du får veta allt om:</strong></p>
-            <ul style="padding-left:20px;">
-                <li>Hur man klappar dem</li>
-                <li>Vad de gillar att äta</li>
-                <li>Varför de är så coola</li>
+            <img src="/static/capybara.gif" alt="Dansande Capybara" class="capy-pic">
+            <h3 style="color:#4ECDC4; font-family:'Fredoka'; font-size:1.5rem;">Om Vårt Nyhetsbrev 📰</h3>
+            <p>Du har hittat till internets viktigaste plats. Genom att anmäla dig till vårt <strong>Nyhetsbrev</strong> får du tillgång till exklusiv information om Capybaras.</p>
+            <p>I nyhetsbrevet får du varje vecka:</p>
+            <ul style="color:#555; line-height: 1.6;">
+                <li>🐹 Söta bilder på marsvin</li>
+                <li>🛁 Tips på hur man bygger spa för gnagare</li>
+                <li>👑 VIP-inbjudningar till våra träffar</li>
             </ul>
         </div>
 
         <div class="form-col">
-            <h3 style="color:#FF6B6B; margin-top:0; text-align:center;">Prenumerera Här! 📝</h3>
+            <h3 style="color:#FF6B6B; margin-top:0; font-family:'Fredoka'; text-align:center;">Prenumerera på Nyhetsbrevet! 📝</h3>
             <form method="POST">
                 {{ form.hidden_tag() }}
                 {{ form.first_name(placeholder="Förnamn") }}
                 {{ form.last_name(placeholder="Efternamn") }}
-                {{ form.email(placeholder="E-postadress") }}
+                {{ form.email(placeholder="Din e-postadress") }}
                 {{ form.company(placeholder="Företag") }}
                 {{ form.title(placeholder="Titel") }}
 
                 <div class="gdpr-box">
-                    <div class="tooltip">Genom att du klickar i denna rutan så godkänner du att CM Corp äger dina uppgifter i all evig framtid.</div>
+                    <span class="gdpr-popup-text">CM Corp kommer att äga informationen du fyller i för all evig framtid! 😈</span>
                     {{ form.gdpr() }} 
-                    <label for="gdpr" style="cursor:help; font-weight:bold; color:#555;">Godkänn villkor (Håll musen här)</label>
+                    <label class="gdpr-label">Jag godkänner villkoren (Håll musen här)</label>
                 </div>
 
-                {{ form.submit() }}
+                {{ form.submit(class="btn-submit") }}
             </form>
         </div>
     </div>
 
     <div class="footer">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
-        <strong>All rights reserved © CM Corp</strong><br>
-        Publicerad: 2026-01-22
-        <br><br>
-        <a href="/login" style="text-decoration:none; color:#bbb;">Admin Login</a>
+        <img src="/static/logo.png" alt="CM Corp Logo">
+        <strong>© 2024 CM Corp - All Rights Reserved</strong><br>
+        <br>
+        <a href="/login" style="text-decoration:none; color:#bbb; font-size:0.8rem;">Hemlig Admin Login 🔐</a>
     </div>
 </div>
 {% endblock %}

@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container" style="max-width:400px;">
-    <h2>🔐 Admin Login</h2>
+    <h2>🔐 Endast för Chefer</h2>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}<div class="flash warning">{{ messages[0] }}</div>{% endif %}
+    {% endwith %}
     <form method="POST">
-        <input type="password" name="pw" placeholder="Lösenord">
-        <button>Logga In</button>
+        <input type="password" name="password" placeholder="Hemligt lösenord..." required>
+        <button class="btn-submit">Logga In</button>
     </form>
+    <br>
+    <a href="/" style="color:#888; text-decoration:none;">← Tillbaka</a>
 </div>
 {% endblock %}
