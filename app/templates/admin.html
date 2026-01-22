@@ -1,35 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="max-width: 900px;">
-    <h2 style="color:#00ffcc;">DATABASE: SUBSCRIBERS</h2>
+<div class="container">
+    <h2>📋 Prenumeranter</h2>
     
-    <form method="GET" style="margin-bottom: 20px;">
-        <input name="fname" placeholder="SEARCH QUERY..." style="width: 200px; display:inline;">
-        <button style="padding: 10px 20px; font-size: 1rem; margin-top:0;">SCAN</button>
-        <a href="/admin" style="margin-left:10px; color:#fff;">RESET</a>
-    </form>
+    <div style="text-align:left; margin-bottom:20px;">
+        <form method="GET" style="display:flex; gap:10px;">
+            <input name="fname" placeholder="Sök..." style="width:auto; flex-grow:1; margin:0;">
+            <button style="width:auto; margin:0; padding:10px 20px; font-size:1rem;">Sök</button>
+            <a href="/admin" style="padding:10px;">Rensa</a>
+        </form>
+    </div>
 
-    <table style="width:100%; text-align:left; border-collapse: collapse; color:#ddd;">
-        <tr style="border-bottom: 2px solid #00ffcc;">
-            <th style="padding:10px;">TIMESTAMP</th>
-            <th>IDENTITY</th>
-            <th>COMM-LINK</th>
-            <th>RANK</th>
+    <table style="width:100%; text-align:left; border-collapse:collapse;">
+        <tr style="background:#f1f1f1; color:#555;">
+            <th style="padding:10px;">Datum</th>
+            <th>Namn</th>
+            <th>Email</th>
+            <th>Titel</th>
             <th></th>
         </tr>
         {% for s in subs %}
-        <tr style="border-bottom: 1px solid #333;">
+        <tr style="border-bottom:1px solid #eee;">
             <td style="padding:10px;">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
             <td>{{ s.first_name }} {{ s.last_name }}</td>
             <td>{{ s.email }}</td>
             <td>{{ s.title }}</td>
-            <td><a href="/delete/{{ s.id }}" style="color:#ff3333; font-weight:bold; text-decoration:none;">[PURGE]</a></td>
+            <td><a href="/delete/{{ s.id }}" style="color:#FF6B6B; font-weight:bold; text-decoration:none;">[Radera]</a></td>
         </tr>
         {% else %}
-        <tr><td colspan="5" style="text-align:center; padding:20px;">NO DATA FOUND.</td></tr>
+        <tr><td colspan="5" style="padding:20px; text-align:center;">Inga prenumeranter.</td></tr>
         {% endfor %}
     </table>
     <br>
-    <a href="/logout" style="color:#00ffcc;">TERMINATE SESSION</a>
+    <a href="/logout" style="color:#888;">Logga ut</a>
 </div>
 {% endblock %}

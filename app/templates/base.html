@@ -2,163 +2,170 @@
 <html lang="sv">
 <head>
     <meta charset="utf-8">
-    <title>CM Corp - Galactic Capybaras</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+    <title>CM Corp - Capybara Adventures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Rymdbakgrund */
-            background: url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2600&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Exo 2', sans-serif;
+            /* Ljusblå himmel-bakgrund istället för bara grönt */
+            background: linear-gradient(180deg, #89f7fe 0%, #66a6ff 100%);
+            font-family: 'Nunito', sans-serif;
             margin: 0;
-            padding: 0;
-            color: #fff;
+            padding: 20px;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            cursor: crosshair; /* Space-sikte istället för kossa */
-        }
-
-        /* En mörk hinna över bakgrunden för läsbarhet */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
+            align-items: flex-start;
         }
 
         .container {
+            background-color: #ffffff;
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             padding: 40px;
-            /* Glassmorphism effekt (genomskinligt glas) */
-            background: rgba(15, 15, 25, 0.85);
-            backdrop-filter: blur(10px);
-            border: 2px solid #00ffcc; /* Neon-grön ram */
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
-            text-align: center;
             margin-top: 20px;
-            margin-bottom: 20px;
+            border: 8px solid #fff;
+            text-align: center;
         }
 
-        /* Neon Glow Text */
         h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+            font-family: 'Fredoka', sans-serif;
+            color: #FF6B6B;
+            font-size: 3.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 0px #ffeaa7;
         }
+        
         h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #b388ff; /* Neon lila */
-            text-shadow: 0 0 5px #b388ff;
+            font-family: 'Fredoka', sans-serif;
+            color: #4ECDC4;
+            font-size: 1.8rem;
+            margin-top: 5px;
         }
 
-        p { font-size: 1.1rem; line-height: 1.6; color: #e0e0e0; }
+        .grid-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .info-col {
+            flex: 1;
+            min-width: 300px;
+            background: #f7f9fc;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #eef2f7;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 300px;
+            background: #fff9f0;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #ffeaa7;
+        }
 
-        /* Capybara Image styling */
-        .capy-img {
+        /* Capybara Bild */
+        .capy-pic {
             width: 100%;
-            max-width: 500px;
-            border-radius: 10px;
-            border: 2px solid #b388ff;
-            box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
-            margin: 20px 0;
+            border-radius: 15px;
+            border: 4px solid #4ECDC4;
+            margin-bottom: 15px;
         }
 
         /* Inputs */
         input {
-            width: 80%;
+            width: 100%;
             padding: 12px;
-            margin: 10px 0;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            border-radius: 5px;
-            font-family: 'Exo 2', sans-serif;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
             font-size: 1rem;
+            box-sizing: border-box; /* Fixar layout-problem */
         }
-        input::placeholder { color: #007d64; }
         
-        /* Submit Button */
+        /* 3D Knapp */
         input[type="submit"], button {
-            background: linear-gradient(45deg, #00ffcc, #00997a);
-            color: #000;
+            background-color: #FF6B6B;
+            color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 15px;
+            width: 100%;
             font-size: 1.2rem;
+            font-family: 'Fredoka', sans-serif;
             border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
-            font-family: 'Orbitron', sans-serif;
-            margin-top: 20px;
-            box-shadow: 0 0 15px #00ffcc;
-            transition: 0.3s;
+            border-bottom: 6px solid #c0392b; /* 3D effekt */
+            margin-top: 15px;
+            transition: transform 0.1s;
         }
-        input[type="submit"]:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #00ffcc;
+        input[type="submit"]:active {
+            transform: translateY(4px);
+            border-bottom: 2px solid #c0392b;
         }
 
-        /* GDPR Styling - Centrerat och Tydligt */
-        .gdpr-row {
+        /* GDPR Popup */
+        .gdpr-box {
+            position: relative;
+            margin-top: 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            margin-top: 20px;
-            position: relative;
         }
-        
-        .gdpr-popup {
+        .tooltip {
             visibility: hidden;
             width: 250px;
-            background-color: #b388ff;
-            color: #000;
+            background-color: #555;
+            color: #fff;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 10px;
             position: absolute;
-            bottom: 140%;
+            z-index: 10;
+            bottom: 130%;
             left: 50%;
             transform: translateX(-50%);
-            font-weight: bold;
-            box-shadow: 0 0 10px #b388ff;
             opacity: 0;
             transition: opacity 0.3s;
-            z-index: 10;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        .gdpr-row:hover .gdpr-popup {
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .gdpr-box:hover .tooltip {
             visibility: visible;
             opacity: 1;
         }
 
-        .flash {
-            background: rgba(0, 255, 204, 0.2);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
         .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #666;
-            width: 100%;
+            margin-top: 50px;
+            color: #888;
+            font-size: 0.9rem;
         }
         .footer img {
-            max-width: 120px;
-            filter: drop-shadow(0 0 5px #fff); /* Glow på loggan */
-            margin-bottom: 10px;
+            max-height: 80px;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+        
+        .flash {
+            background: #a8e6cf; color: #1d643b;
+            padding: 15px; border-radius: 10px; text-align:center;
+            margin-bottom: 20px; font-weight: bold;
         }
     </style>
 </head>

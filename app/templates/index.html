@@ -2,47 +2,54 @@
 {% block content %}
 <div class="container">
     <h1>CM CORP</h1>
-    <h2>INTERGALACTIC CAPYBARA DIVISION</h2>
+    <h2>Världens Ledande Marsvins-Experter</h2>
     
     {% with m=get_flashed_messages(with_categories=true) %}
         {% if m %}<div class="flash">{{ m[0][1] }}</div>{% endif %}
     {% endwith %}
 
-    <img src="https://images.unsplash.com/photo-1547638375-ebf04735d96d?q=80&w=1200" alt="Space Capybara" class="capy-img">
-
-    <div style="text-align: left; margin: 20px 0;">
-        <p><strong>MISSION STATUS:</strong><br>
-        Välkommen till CM Corp. Vi är ett extremt seriöst företag som specialiserar oss på <em>Hydrochoerus hydrochaeris</em> i nollgravitation. Marsvin är framtiden.</p>
-        
-        <p><strong>PROTOCOL:</strong><br>
-        Fyll i data nedan för att få access till vårt krypterade nyhetsbrev om rymd-marsvin och deras dominans i universum.</p>
-    </div>
-
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.first_name(placeholder="FÖRNAMN") }}
-        {{ form.last_name(placeholder="EFTERNAMN") }}
-        {{ form.email(placeholder="KOMMUNIKATIONS-ID (EMAIL)") }}
-        {{ form.company(placeholder="BAS / FÖRETAG") }}
-        {{ form.title(placeholder="RANG / TITEL") }}
-
-        <div class="gdpr-row">
-            <div class="gdpr-popup">Genom att klicka här godkänner du att CM Corp äger dina uppgifter i all evig framtid (och i hela galaxen).</div>
-            {{ form.gdpr() }} 
-            <label for="gdpr" style="color:#00ffcc; cursor:help;">JAG GODKÄNNER VILLKOREN</label>
+    <div class="grid-layout">
+        <div class="info-col">
+            <h3 style="color:#4ECDC4; margin-top:0;">Om CM Corp</h3>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Capybara_%28Hydrochoerus_hydrochaeris%29.JPG" alt="Capybara" class="capy-pic">
+            
+            <p>Vi är ett oerhört seriöst företag. Vi sysslar inte med tråkiga saker som ekonomi. Vi sysslar med <strong>Capybaras</strong> (Vattensvin).</p>
+            <p>Genom att fylla i formuläret här bredvid anmäler du dig till vårt exklusiva <strong>NYHETSBREV</strong>.</p>
+            <p><strong>Du får veta allt om:</strong></p>
+            <ul style="padding-left:20px;">
+                <li>Hur man klappar dem</li>
+                <li>Vad de gillar att äta</li>
+                <li>Varför de är så coola</li>
+            </ul>
         </div>
 
-        {{ form.submit() }}
-    </form>
-</div>
+        <div class="form-col">
+            <h3 style="color:#FF6B6B; margin-top:0; text-align:center;">Prenumerera Här! 📝</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.first_name(placeholder="Förnamn") }}
+                {{ form.last_name(placeholder="Efternamn") }}
+                {{ form.email(placeholder="E-postadress") }}
+                {{ form.company(placeholder="Företag") }}
+                {{ form.title(placeholder="Titel") }}
 
-<div class="footer">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
-    <div>
-        <strong>ALL RIGHTS RESERVED © CM CORP</strong><br>
-        SYSTEM DATE: 2026-01-22
+                <div class="gdpr-box">
+                    <div class="tooltip">Genom att du klickar i denna rutan så godkänner du att CM Corp äger dina uppgifter i all evig framtid.</div>
+                    {{ form.gdpr() }} 
+                    <label for="gdpr" style="cursor:help; font-weight:bold; color:#555;">Godkänn villkor (Håll musen här)</label>
+                </div>
+
+                {{ form.submit() }}
+            </form>
+        </div>
     </div>
-    <br>
-    <a href="/login" style="color:#333; text-decoration:none;">[ADMIN ACCESS]</a>
+
+    <div class="footer">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
+        <strong>All rights reserved © CM Corp</strong><br>
+        Publicerad: 2026-01-22
+        <br><br>
+        <a href="/login" style="text-decoration:none; color:#bbb;">Admin Login</a>
+    </div>
 </div>
 {% endblock %}

@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-echo "### INITIALIZING CM CORP: GALACTIC CAPYBARA EDITION ###"
+echo "### INITIALIZING CM CORP: FINAL DISNEY EDITION ###"
 
-# 1. Mappstruktur (VIKTIGT: Raderar INTE static-mappen nu, så din logga sparas)
+# 1. Städa upp (men behåll loggan om den finns)
+rm -rf app/templates
 mkdir -p app/{templates,static} .github/workflows infra
 
 # 2. Python Requirements
@@ -16,7 +17,7 @@ email_validator
 gunicorn
 EOF
 
-# 3. Backend (app.py) - Oförändrad logik, fungerar bra
+# 3. Backend (app.py) - Exakt logik enligt krav
 cat <<EOF > app/app.py
 import os
 from datetime import datetime
@@ -28,7 +29,7 @@ from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'space-capy-secret'
+app.config['SECRET_KEY'] = 'final-fix-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -56,12 +57,13 @@ class RegForm(FlaskForm):
     company = StringField('Företag', validators=[DataRequired()])
     title = StringField('Titel', validators=[DataRequired()])
     gdpr = BooleanField('GDPR', validators=[DataRequired()])
-    submit = SubmitField('INITIERA UPPSKJUTNING 🚀')
+    submit = SubmitField('JAG VILL VARA MED!')
 
 @app.route('/', methods=['GET','POST'])
 def index():
     form = RegForm()
     if form.validate_on_submit():
+        # Tyst misslyckande om mailen finns
         if Subscriber.query.filter_by(email=form.email.data).first():
             return redirect(url_for('index'))
         
@@ -74,7 +76,7 @@ def index():
         )
         db.session.add(new_sub)
         db.session.commit()
-        flash('SUCCESS: Du är nu en Space Capybara Cadet!', 'success')
+        flash('Hurra! Välkommen till klubben!', 'success')
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
@@ -96,10 +98,13 @@ def admin():
     search_fname = request.args.get('fname')
     search_lname = request.args.get('lname')
     search_email = request.args.get('email')
+    # Sortera senaste överst
     query = Subscriber.query.order_by(Subscriber.created_at.desc())
+    
     if search_fname: query = query.filter(Subscriber.first_name.contains(search_fname))
     if search_lname: query = query.filter(Subscriber.last_name.contains(search_lname))
     if search_email: query = query.filter(Subscriber.email.contains(search_email))
+    
     return render_template('admin.html', subs=query.all())
 
 @app.route('/delete/<int:id>')
@@ -114,169 +119,176 @@ if __name__=='__main__':
     app.run(debug=True)
 EOF
 
-# 4. Frontend Templates (SPACE CAPYBARA THEME)
+# 4. Frontend Templates (FÄRGGLAD DISNEY DESIGN)
 cat <<EOF > app/templates/base.html
 <!doctype html>
 <html lang="sv">
 <head>
     <meta charset="utf-8">
-    <title>CM Corp - Galactic Capybaras</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+    <title>CM Corp - Capybara Adventures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Rymdbakgrund */
-            background: url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2600&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Exo 2', sans-serif;
+            /* Ljusblå himmel-bakgrund istället för bara grönt */
+            background: linear-gradient(180deg, #89f7fe 0%, #66a6ff 100%);
+            font-family: 'Nunito', sans-serif;
             margin: 0;
-            padding: 0;
-            color: #fff;
+            padding: 20px;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            cursor: crosshair; /* Space-sikte istället för kossa */
-        }
-
-        /* En mörk hinna över bakgrunden för läsbarhet */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
+            align-items: flex-start;
         }
 
         .container {
+            background-color: #ffffff;
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             padding: 40px;
-            /* Glassmorphism effekt (genomskinligt glas) */
-            background: rgba(15, 15, 25, 0.85);
-            backdrop-filter: blur(10px);
-            border: 2px solid #00ffcc; /* Neon-grön ram */
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
-            text-align: center;
             margin-top: 20px;
-            margin-bottom: 20px;
+            border: 8px solid #fff;
+            text-align: center;
         }
 
-        /* Neon Glow Text */
         h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+            font-family: 'Fredoka', sans-serif;
+            color: #FF6B6B;
+            font-size: 3.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 0px #ffeaa7;
         }
+        
         h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #b388ff; /* Neon lila */
-            text-shadow: 0 0 5px #b388ff;
+            font-family: 'Fredoka', sans-serif;
+            color: #4ECDC4;
+            font-size: 1.8rem;
+            margin-top: 5px;
         }
 
-        p { font-size: 1.1rem; line-height: 1.6; color: #e0e0e0; }
+        .grid-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .info-col {
+            flex: 1;
+            min-width: 300px;
+            background: #f7f9fc;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #eef2f7;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 300px;
+            background: #fff9f0;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #ffeaa7;
+        }
 
-        /* Capybara Image styling */
-        .capy-img {
+        /* Capybara Bild */
+        .capy-pic {
             width: 100%;
-            max-width: 500px;
-            border-radius: 10px;
-            border: 2px solid #b388ff;
-            box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
-            margin: 20px 0;
+            border-radius: 15px;
+            border: 4px solid #4ECDC4;
+            margin-bottom: 15px;
         }
 
         /* Inputs */
         input {
-            width: 80%;
+            width: 100%;
             padding: 12px;
-            margin: 10px 0;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            border-radius: 5px;
-            font-family: 'Exo 2', sans-serif;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
             font-size: 1rem;
+            box-sizing: border-box; /* Fixar layout-problem */
         }
-        input::placeholder { color: #007d64; }
         
-        /* Submit Button */
+        /* 3D Knapp */
         input[type="submit"], button {
-            background: linear-gradient(45deg, #00ffcc, #00997a);
-            color: #000;
+            background-color: #FF6B6B;
+            color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 15px;
+            width: 100%;
             font-size: 1.2rem;
+            font-family: 'Fredoka', sans-serif;
             border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
-            font-family: 'Orbitron', sans-serif;
-            margin-top: 20px;
-            box-shadow: 0 0 15px #00ffcc;
-            transition: 0.3s;
+            border-bottom: 6px solid #c0392b; /* 3D effekt */
+            margin-top: 15px;
+            transition: transform 0.1s;
         }
-        input[type="submit"]:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #00ffcc;
+        input[type="submit"]:active {
+            transform: translateY(4px);
+            border-bottom: 2px solid #c0392b;
         }
 
-        /* GDPR Styling - Centrerat och Tydligt */
-        .gdpr-row {
+        /* GDPR Popup */
+        .gdpr-box {
+            position: relative;
+            margin-top: 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            margin-top: 20px;
-            position: relative;
         }
-        
-        .gdpr-popup {
+        .tooltip {
             visibility: hidden;
             width: 250px;
-            background-color: #b388ff;
-            color: #000;
+            background-color: #555;
+            color: #fff;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 10px;
             position: absolute;
-            bottom: 140%;
+            z-index: 10;
+            bottom: 130%;
             left: 50%;
             transform: translateX(-50%);
-            font-weight: bold;
-            box-shadow: 0 0 10px #b388ff;
             opacity: 0;
             transition: opacity 0.3s;
-            z-index: 10;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        .gdpr-row:hover .gdpr-popup {
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .gdpr-box:hover .tooltip {
             visibility: visible;
             opacity: 1;
         }
 
-        .flash {
-            background: rgba(0, 255, 204, 0.2);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
         .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #666;
-            width: 100%;
+            margin-top: 50px;
+            color: #888;
+            font-size: 0.9rem;
         }
         .footer img {
-            max-width: 120px;
-            filter: drop-shadow(0 0 5px #fff); /* Glow på loggan */
-            margin-bottom: 10px;
+            max-height: 80px;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+        
+        .flash {
+            background: #a8e6cf; color: #1d643b;
+            padding: 15px; border-radius: 10px; text-align:center;
+            margin-bottom: 20px; font-weight: bold;
         }
     </style>
 </head>
@@ -291,48 +303,55 @@ cat <<EOF > app/templates/index.html
 {% block content %}
 <div class="container">
     <h1>CM CORP</h1>
-    <h2>INTERGALACTIC CAPYBARA DIVISION</h2>
+    <h2>Världens Ledande Marsvins-Experter</h2>
     
     {% with m=get_flashed_messages(with_categories=true) %}
         {% if m %}<div class="flash">{{ m[0][1] }}</div>{% endif %}
     {% endwith %}
 
-    <img src="https://images.unsplash.com/photo-1547638375-ebf04735d96d?q=80&w=1200" alt="Space Capybara" class="capy-img">
-
-    <div style="text-align: left; margin: 20px 0;">
-        <p><strong>MISSION STATUS:</strong><br>
-        Välkommen till CM Corp. Vi är ett extremt seriöst företag som specialiserar oss på <em>Hydrochoerus hydrochaeris</em> i nollgravitation. Marsvin är framtiden.</p>
-        
-        <p><strong>PROTOCOL:</strong><br>
-        Fyll i data nedan för att få access till vårt krypterade nyhetsbrev om rymd-marsvin och deras dominans i universum.</p>
-    </div>
-
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.first_name(placeholder="FÖRNAMN") }}
-        {{ form.last_name(placeholder="EFTERNAMN") }}
-        {{ form.email(placeholder="KOMMUNIKATIONS-ID (EMAIL)") }}
-        {{ form.company(placeholder="BAS / FÖRETAG") }}
-        {{ form.title(placeholder="RANG / TITEL") }}
-
-        <div class="gdpr-row">
-            <div class="gdpr-popup">Genom att klicka här godkänner du att CM Corp äger dina uppgifter i all evig framtid (och i hela galaxen).</div>
-            {{ form.gdpr() }} 
-            <label for="gdpr" style="color:#00ffcc; cursor:help;">JAG GODKÄNNER VILLKOREN</label>
+    <div class="grid-layout">
+        <div class="info-col">
+            <h3 style="color:#4ECDC4; margin-top:0;">Om CM Corp</h3>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Capybara_%28Hydrochoerus_hydrochaeris%29.JPG" alt="Capybara" class="capy-pic">
+            
+            <p>Vi är ett oerhört seriöst företag. Vi sysslar inte med tråkiga saker som ekonomi. Vi sysslar med <strong>Capybaras</strong> (Vattensvin).</p>
+            <p>Genom att fylla i formuläret här bredvid anmäler du dig till vårt exklusiva <strong>NYHETSBREV</strong>.</p>
+            <p><strong>Du får veta allt om:</strong></p>
+            <ul style="padding-left:20px;">
+                <li>Hur man klappar dem</li>
+                <li>Vad de gillar att äta</li>
+                <li>Varför de är så coola</li>
+            </ul>
         </div>
 
-        {{ form.submit() }}
-    </form>
-</div>
+        <div class="form-col">
+            <h3 style="color:#FF6B6B; margin-top:0; text-align:center;">Prenumerera Här! 📝</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.first_name(placeholder="Förnamn") }}
+                {{ form.last_name(placeholder="Efternamn") }}
+                {{ form.email(placeholder="E-postadress") }}
+                {{ form.company(placeholder="Företag") }}
+                {{ form.title(placeholder="Titel") }}
 
-<div class="footer">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
-    <div>
-        <strong>ALL RIGHTS RESERVED © CM CORP</strong><br>
-        SYSTEM DATE: $(date +%Y-%m-%d)
+                <div class="gdpr-box">
+                    <div class="tooltip">Genom att du klickar i denna rutan så godkänner du att CM Corp äger dina uppgifter i all evig framtid.</div>
+                    {{ form.gdpr() }} 
+                    <label for="gdpr" style="cursor:help; font-weight:bold; color:#555;">Godkänn villkor (Håll musen här)</label>
+                </div>
+
+                {{ form.submit() }}
+            </form>
+        </div>
     </div>
-    <br>
-    <a href="/login" style="color:#333; text-decoration:none;">[ADMIN ACCESS]</a>
+
+    <div class="footer">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
+        <strong>All rights reserved © CM Corp</strong><br>
+        Publicerad: $(date +%Y-%m-%d)
+        <br><br>
+        <a href="/login" style="text-decoration:none; color:#bbb;">Admin Login</a>
+    </div>
 </div>
 {% endblock %}
 EOF
@@ -340,11 +359,11 @@ EOF
 cat <<EOF > app/templates/login.html
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="max-width: 400px;">
-    <h2>ADMIN ACCESS</h2>
+<div class="container" style="max-width:400px;">
+    <h2>🔐 Admin Login</h2>
     <form method="POST">
-        <input type="password" name="pw" placeholder="SECURITY CODE">
-        <button style="width:100%;">ACCESS</button>
+        <input type="password" name="pw" placeholder="Lösenord">
+        <button>Logga In</button>
     </form>
 </div>
 {% endblock %}
@@ -353,47 +372,44 @@ EOF
 cat <<EOF > app/templates/admin.html
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="max-width: 900px;">
-    <h2 style="color:#00ffcc;">DATABASE: SUBSCRIBERS</h2>
+<div class="container">
+    <h2>📋 Prenumeranter</h2>
     
-    <form method="GET" style="margin-bottom: 20px;">
-        <input name="fname" placeholder="SEARCH QUERY..." style="width: 200px; display:inline;">
-        <button style="padding: 10px 20px; font-size: 1rem; margin-top:0;">SCAN</button>
-        <a href="/admin" style="margin-left:10px; color:#fff;">RESET</a>
-    </form>
+    <div style="text-align:left; margin-bottom:20px;">
+        <form method="GET" style="display:flex; gap:10px;">
+            <input name="fname" placeholder="Sök..." style="width:auto; flex-grow:1; margin:0;">
+            <button style="width:auto; margin:0; padding:10px 20px; font-size:1rem;">Sök</button>
+            <a href="/admin" style="padding:10px;">Rensa</a>
+        </form>
+    </div>
 
-    <table style="width:100%; text-align:left; border-collapse: collapse; color:#ddd;">
-        <tr style="border-bottom: 2px solid #00ffcc;">
-            <th style="padding:10px;">TIMESTAMP</th>
-            <th>IDENTITY</th>
-            <th>COMM-LINK</th>
-            <th>RANK</th>
+    <table style="width:100%; text-align:left; border-collapse:collapse;">
+        <tr style="background:#f1f1f1; color:#555;">
+            <th style="padding:10px;">Datum</th>
+            <th>Namn</th>
+            <th>Email</th>
+            <th>Titel</th>
             <th></th>
         </tr>
         {% for s in subs %}
-        <tr style="border-bottom: 1px solid #333;">
+        <tr style="border-bottom:1px solid #eee;">
             <td style="padding:10px;">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
             <td>{{ s.first_name }} {{ s.last_name }}</td>
             <td>{{ s.email }}</td>
             <td>{{ s.title }}</td>
-            <td><a href="/delete/{{ s.id }}" style="color:#ff3333; font-weight:bold; text-decoration:none;">[PURGE]</a></td>
+            <td><a href="/delete/{{ s.id }}" style="color:#FF6B6B; font-weight:bold; text-decoration:none;">[Radera]</a></td>
         </tr>
         {% else %}
-        <tr><td colspan="5" style="text-align:center; padding:20px;">NO DATA FOUND.</td></tr>
+        <tr><td colspan="5" style="padding:20px; text-align:center;">Inga prenumeranter.</td></tr>
         {% endfor %}
     </table>
     <br>
-    <a href="/logout" style="color:#00ffcc;">TERMINATE SESSION</a>
+    <a href="/logout" style="color:#888;">Logga ut</a>
 </div>
 {% endblock %}
 EOF
 
-# Skapar bara filen om den saknas, raderar inte existerande!
-if [ ! -f app/static/logo.png ]; then
-    touch app/static/logo.png
-fi
-
 git add .
-git commit -m "Design Overhaul: Galactic Capybara V6" || true
+git commit -m "Final Fix: Disney/Toy Story Theme V8" || true
 
-echo "### SYSTEM READY. UPLOAD TO GITHUB. ###"
+echo "### KLART! Nu kan du köra appen. ###"

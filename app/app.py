@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'space-capy-secret'
+app.config['SECRET_KEY'] = 'final-fix-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -36,12 +36,13 @@ class RegForm(FlaskForm):
     company = StringField('Företag', validators=[DataRequired()])
     title = StringField('Titel', validators=[DataRequired()])
     gdpr = BooleanField('GDPR', validators=[DataRequired()])
-    submit = SubmitField('INITIERA UPPSKJUTNING 🚀')
+    submit = SubmitField('JAG VILL VARA MED!')
 
 @app.route('/', methods=['GET','POST'])
 def index():
     form = RegForm()
     if form.validate_on_submit():
+        # Tyst misslyckande om mailen finns
         if Subscriber.query.filter_by(email=form.email.data).first():
             return redirect(url_for('index'))
         
@@ -54,7 +55,7 @@ def index():
         )
         db.session.add(new_sub)
         db.session.commit()
-        flash('SUCCESS: Du är nu en Space Capybara Cadet!', 'success')
+        flash('Hurra! Välkommen till klubben!', 'success')
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 
@@ -76,10 +77,13 @@ def admin():
     search_fname = request.args.get('fname')
     search_lname = request.args.get('lname')
     search_email = request.args.get('email')
+    # Sortera senaste överst
     query = Subscriber.query.order_by(Subscriber.created_at.desc())
+    
     if search_fname: query = query.filter(Subscriber.first_name.contains(search_fname))
     if search_lname: query = query.filter(Subscriber.last_name.contains(search_lname))
     if search_email: query = query.filter(Subscriber.email.contains(search_email))
+    
     return render_template('admin.html', subs=query.all())
 
 @app.route('/delete/<int:id>')
