@@ -1,45 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h1>CM CORP 🥔</h1>
-    <h2>Världsledande inom Capybara Excellence</h2>
+    <h1>CM CORP</h1>
+    <h2>INTERGALACTIC CAPYBARA DIVISION</h2>
     
     {% with m=get_flashed_messages(with_categories=true) %}
         {% if m %}<div class="flash">{{ m[0][1] }}</div>{% endif %}
     {% endwith %}
 
-    <div style="text-align: left; margin-bottom: 30px;">
-        <p><strong>Vilka är vi?</strong><br>
-        CM Corp är ett mycket seriöst företag. Vi ägnar oss inte åt aktier, fastigheter eller krypto. Vi ägnar oss uteslutande åt <em>Hydrochoerus hydrochaeris</em> – det majestätiska vattensvinet.</p>
+    <img src="https://images.unsplash.com/photo-1547638375-ebf04735d96d?q=80&w=1200" alt="Space Capybara" class="capy-img">
+
+    <div style="text-align: left; margin: 20px 0;">
+        <p><strong>MISSION STATUS:</strong><br>
+        Välkommen till CM Corp. Vi är ett extremt seriöst företag som specialiserar oss på <em>Hydrochoerus hydrochaeris</em> i nollgravitation. Marsvin är framtiden.</p>
         
-        <p><strong>Varför registrera sig?</strong><br>
-        Fyller du i formuläret nedan får du exklusiv tillgång till vårt nyhetsbrev. Det innehåller allt från "Veckans Vattensvin" till tips på hur man bäst kliar en Capybara bakom örat.</p>
+        <p><strong>PROTOCOL:</strong><br>
+        Fyll i data nedan för att få access till vårt krypterade nyhetsbrev om rymd-marsvin och deras dominans i universum.</p>
     </div>
 
     <form method="POST">
         {{ form.hidden_tag() }}
-        {{ form.first_name(placeholder="Ditt förnamn") }}
-        {{ form.last_name(placeholder="Ditt efternamn") }}
-        {{ form.email(placeholder="Din bästa e-post") }}
-        {{ form.company(placeholder="Ditt företag (eller Capybara-klubb)") }}
-        {{ form.title(placeholder="Din titel (t.ex. Gnagare-entusiast)") }}
+        {{ form.first_name(placeholder="FÖRNAMN") }}
+        {{ form.last_name(placeholder="EFTERNAMN") }}
+        {{ form.email(placeholder="KOMMUNIKATIONS-ID (EMAIL)") }}
+        {{ form.company(placeholder="BAS / FÖRETAG") }}
+        {{ form.title(placeholder="RANG / TITEL") }}
 
-        <div class="gdpr-container">
-            <span class="gdpr-tooltip">Genom att du klickar i denna rutan så godkänner du att CM Corp äger dina uppgifter i all evig framtid.</span>
-            {{ form.gdpr() }} <label for="gdpr" style="cursor:help;">Jag godkänner villkoren (Håll musen här!)</label>
+        <div class="gdpr-row">
+            <div class="gdpr-popup">Genom att klicka här godkänner du att CM Corp äger dina uppgifter i all evig framtid (och i hela galaxen).</div>
+            {{ form.gdpr() }} 
+            <label for="gdpr" style="color:#00ffcc; cursor:help;">JAG GODKÄNNER VILLKOREN</label>
         </div>
 
         {{ form.submit() }}
     </form>
-    
-    <a href="/login" style="display:block; margin-top:20px; color:#aaa; font-size:0.8rem;">Admin Login</a>
 </div>
 
 <div class="footer">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo">
     <div>
-        <strong>All rights reserved © CM Corp</strong><br>
-        Publicerad: 2026-01-22
+        <strong>ALL RIGHTS RESERVED © CM CORP</strong><br>
+        SYSTEM DATE: 2026-01-22
     </div>
+    <br>
+    <a href="/login" style="color:#333; text-decoration:none;">[ADMIN ACCESS]</a>
 </div>
 {% endblock %}

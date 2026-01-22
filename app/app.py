@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'capybara-secret-key'
+app.config['SECRET_KEY'] = 'space-capy-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -29,23 +29,21 @@ class User(UserMixin): id=1
 @login_manager.user_loader
 def load_user(id): return User()
 
-# Formulär med GDPR
 class RegForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired()])
     last_name = StringField('Efternamn', validators=[DataRequired()])
     email = StringField('E-post', validators=[DataRequired(), Email()])
     company = StringField('Företag', validators=[DataRequired()])
     title = StringField('Titel', validators=[DataRequired()])
-    # GDPR Checkbox
     gdpr = BooleanField('GDPR', validators=[DataRequired()])
-    submit = SubmitField('JAG VILL HA CAPYBARA-NYHETER!')
+    submit = SubmitField('INITIERA UPPSKJUTNING 🚀')
 
 @app.route('/', methods=['GET','POST'])
 def index():
     form = RegForm()
     if form.validate_on_submit():
         if Subscriber.query.filter_by(email=form.email.data).first():
-            return redirect(url_for('index')) # Tyst reload
+            return redirect(url_for('index'))
         
         new_sub = Subscriber(
             first_name=form.first_name.data,
@@ -56,7 +54,7 @@ def index():
         )
         db.session.add(new_sub)
         db.session.commit()
-        flash('HURRA! Du är nu en del av Capybara-familjen!', 'success')
+        flash('SUCCESS: Du är nu en Space Capybara Cadet!', 'success')
         return redirect(url_for('index'))
     return render_template('index.html', form=form)
 

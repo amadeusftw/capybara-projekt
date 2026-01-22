@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container" style="max-width: 900px;">
-    <h2>Capybara Prenumeranter</h2>
+    <h2 style="color:#00ffcc;">DATABASE: SUBSCRIBERS</h2>
     
     <form method="GET" style="margin-bottom: 20px;">
-        <input name="fname" placeholder="Sök..." style="width: 200px; display:inline;">
-        <button style="padding: 10px 20px; font-size: 1rem;">Sök</button>
-        <a href="/admin" style="margin-left:10px;">Rensa</a>
+        <input name="fname" placeholder="SEARCH QUERY..." style="width: 200px; display:inline;">
+        <button style="padding: 10px 20px; font-size: 1rem; margin-top:0;">SCAN</button>
+        <a href="/admin" style="margin-left:10px; color:#fff;">RESET</a>
     </form>
 
-    <table style="width:100%; text-align:left; border-collapse: collapse;">
-        <tr style="background:#F1F8E9;">
-            <th style="padding:10px;">Datum</th>
-            <th>Namn</th>
-            <th>Email</th>
-            <th>Titel</th>
+    <table style="width:100%; text-align:left; border-collapse: collapse; color:#ddd;">
+        <tr style="border-bottom: 2px solid #00ffcc;">
+            <th style="padding:10px;">TIMESTAMP</th>
+            <th>IDENTITY</th>
+            <th>COMM-LINK</th>
+            <th>RANK</th>
             <th></th>
         </tr>
         {% for s in subs %}
-        <tr style="border-bottom: 1px solid #ddd;">
+        <tr style="border-bottom: 1px solid #333;">
             <td style="padding:10px;">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
             <td>{{ s.first_name }} {{ s.last_name }}</td>
             <td>{{ s.email }}</td>
             <td>{{ s.title }}</td>
-            <td><a href="/delete/{{ s.id }}" style="color:red; font-weight:bold;">[X]</a></td>
+            <td><a href="/delete/{{ s.id }}" style="color:#ff3333; font-weight:bold; text-decoration:none;">[PURGE]</a></td>
         </tr>
         {% else %}
-        <tr><td colspan="5" style="text-align:center;">Inga prenumeranter ännu.</td></tr>
+        <tr><td colspan="5" style="text-align:center; padding:20px;">NO DATA FOUND.</td></tr>
         {% endfor %}
     </table>
     <br>
-    <a href="/logout">Logga ut</a>
+    <a href="/logout" style="color:#00ffcc;">TERMINATE SESSION</a>
 </div>
 {% endblock %}
