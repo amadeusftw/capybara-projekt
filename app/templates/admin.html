@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 style="color:#00ffcc;">DATABASE CORE</h3>
+
+<div style="margin-bottom:20px; border:1px solid #333; padding:10px;">
+    <form method="GET">
+        <input name="fname" placeholder="Förnamn" style="background:#000;color:#fff;border:1px solid #333;">
+        <input name="lname" placeholder="Efternamn" style="background:#000;color:#fff;border:1px solid #333;">
+        <input name="email" placeholder="Email" style="background:#000;color:#fff;border:1px solid #333;">
+        <input type="date" name="date" style="background:#000;color:#fff;border:1px solid #333;">
+        <button style="background:#00ffcc; cursor:pointer;">SÖK</button>
+        <a href="/admin" style="color:#fff; margin-left:10px;">RENSA</a>
+    </form>
+</div>
+
+<table style="width:100%;text-align:left;border-collapse:collapse;">
+    <tr>
+        <th style="border-bottom:1px solid #333;">DATUM</th>
+        <th style="border-bottom:1px solid #333;">NAMN</th>
+        <th style="border-bottom:1px solid #333;">EMAIL</th>
+        <th style="border-bottom:1px solid #333;">TITEL</th>
+        <th>ACTION</th>
+    </tr>
+    {% for s in subs %}
+    <tr>
+        <td>{{ s.created_at.strftime('%Y-%m-%d') }}</td>
+        <td>{{ s.first_name }} {{ s.last_name }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.title }}</td>
+        <td><a href="/delete/{{ s.id }}" onclick="return confirm('Radera?');" style="color:#f00;">[RADERA]</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" style="text-align:center;padding:20px;">Inga resultat.</td></tr>
+    {% endfor %}
+</table>
+<a href="/logout" style="color:#555;display:block;text-align:center;margin-top:20px;">LOGOUT</a>
+{% endblock %}

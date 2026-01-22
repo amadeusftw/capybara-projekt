@@ -1,0 +1,12 @@
+<!doctype html>
+<html style="background:#050505;color:#e0e0e0;font-family:monospace;height:100%;">
+<head><title>CM CORP</title></head>
+<body style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;">
+    <h1 style="color:#00ffcc;font-size:3rem;text-shadow:0 0 10px #00ffcc;">CM CORP</h1>
+    {% with m=get_flashed_messages(with_categories=true) %}
+        {% if m %}<div style="border:1px solid #fff;padding:10px;margin-bottom:20px;">{{ m[0][1] }}</div>{% endif %}
+    {% endwith %}
+    <div style="border:1px solid #333;padding:40px;background:#111;box-shadow:0 0 20px rgba(0,255,204,0.1);">
+        {% block content %}{% endblock %}
+    </div>
+</body></html>

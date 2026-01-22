@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div style="margin:10px;">{{ form.first_name(placeholder="FÖRNAMN", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
+    <div style="margin:10px;">{{ form.last_name(placeholder="EFTERNAMN", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
+    <div style="margin:10px;">{{ form.email(placeholder="E-POST", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
+    <div style="margin:10px;">{{ form.company(placeholder="FÖRETAG", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
+    <div style="margin:10px;">{{ form.title(placeholder="TITEL", style="background:#000;color:#0f0;border:1px solid #333;padding:10px;width:300px;") }}</div>
+    {{ form.submit(style="width:100%;padding:10px;background:#00ffcc;font-weight:bold;cursor:pointer;") }}
+</form>
+<a href="/login" style="color:#555;display:block;text-align:center;margin-top:20px;">SYS_ADMIN</a>
+{% endblock %}
