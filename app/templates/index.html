@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <h1>CM CORP</h1>
-    <h2>✨ Världens Ledande Marsvins-Experter ✨</h2>
+    <h2>✨ Världens Ledande Capybara-Experter ✨</h2>
     
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -19,14 +19,14 @@
             <p>Du har hittat till internets viktigaste plats. Genom att anmäla dig till vårt <strong>Nyhetsbrev</strong> får du tillgång till exklusiv information om Capybaras.</p>
             <p>I nyhetsbrevet får du varje vecka:</p>
             <ul style="color:#555; line-height: 1.6;">
-                <li>🐹 Söta bilder på marsvin</li>
+                <li>🐹 Söta bilder på Capybaras</li>
                 <li>🛁 Tips på hur man bygger spa för gnagare</li>
-                <li>👑 VIP-inbjudningar till våra träffar</li>
+                <li>👑 VIP-inbjudningar till våra träffar där vi fikar och gosar med gnagare!</li>
             </ul>
         </div>
 
         <div class="form-col">
-            <h3 style="color:#FF6B6B; margin-top:0; font-family:'Fredoka'; text-align:center;">Prenumerera på Nyhetsbrevet! 📝</h3>
+            <h3 style="color:#FF6B6B; margin-top:0; font-family:'Fredoka'; text-align:center;">Prenumerera på nyhetsbrevet! 📝</h3>
             <form method="POST">
                 {{ form.hidden_tag() }}
                 {{ form.first_name(placeholder="Förnamn") }}
