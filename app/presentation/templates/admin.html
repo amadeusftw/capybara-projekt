@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem; max-width: 1000px; margin: 0 auto;">
+    <h1>Admin Dashboard 🕵️‍♂️</h1>
+    
+    <form method="GET" action="{{ url_for('admin_bp.admin_dashboard') }}" style="margin-bottom: 2rem; display: flex; gap: 10px;">
+        <input type="text" name="search" placeholder="Sök namn eller e-post..." style="padding: 10px; flex-grow: 1; border-radius: 5px; border: 1px solid #ccc;">
+        <button type="submit" class="btn-primary" style="width: auto;">Sök</button>
+        {% if request.args.get('search') %}
+            <a href="{{ url_for('admin_bp.admin_dashboard') }}" class="btn-primary" style="background-color: #7f8c8d; text-decoration: none; padding: 12px 24px; display: inline-block;">Rensa</a>
+        {% endif %}
+    </form>
+
+    <div style="background: white; border-radius: 10px; padding: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f8f9fa; text-align: left;">
+                    <th style="padding: 1rem; border-bottom: 2px solid #eee;">Namn</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #eee;">Email</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #eee;">Företag</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #eee;">Titel</th>
+                    <th style="padding: 1rem; border-bottom: 2px solid #eee;">Åtgärd</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in subscribers %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 1rem;">{{ person.name }}</td>
+                    <td style="padding: 1rem;">{{ person.email }}</td>
+                    <td style="padding: 1rem;">{{ person.company }}</td>
+                    <td style="padding: 1rem;">{{ person.title }}</td>
+                    <td style="padding: 1rem;">
+                        <form action="{{ url_for('admin_bp.delete_subscriber') }}" method="POST" onsubmit="return confirm('Är du säker på att du vill ta bort denna?');">
+                            <input type="hidden" name="email" value="{{ person.email }}">
+                            <button type="submit" style="background-color: #FF6B6B; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Ta bort</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="padding: 1rem; text-align: center;">Inga prenumeranter hittades.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

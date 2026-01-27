@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Capybara News - Startsida{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section - Capybara Style */
+    .hero {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: linear-gradient(135deg, var(--light) 0%, #e0f7fa 100%);
+        border-bottom: 5px solid var(--primary);
+    }
+
+    .hero__emoji {
+        font-size: 5rem;
+        display: block;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .hero__title {
+        font-size: 3.5rem;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .hero__subtitle {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Primary Button Style (återställd) */
+    .btn-hero {
+        background-color: var(--secondary);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-decoration: none; /* Viktigt för länken */
+        border: none;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        transition: transform 0.2s;
+        display: inline-block;
+    }
+
+    .btn-hero:hover {
+        transform: scale(1.05);
+        background-color: #ff5252;
+        color: white;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="hero">
+    <span class="hero__emoji">🐹</span>
+    <h1 class="hero__title">Capybara News</h1>
+    <p class="hero__subtitle">
+        Världens lugnaste nyheter direkt till din inkorg. 
+        Ingen stress, bara capybaras.
+    </p>
+    
+    <a href="{{ url_for('public.subscribe') }}" class="btn-hero">
+        Prenumerera Nu
+    </a>
+</header>
+
+<section style="padding: 3rem 2rem; text-align: center;">
+    <h2 style="color: var(--dark);">Senaste Nytt</h2>
+    <div style="margin-top: 2rem; padding: 2rem; background: white; border-radius: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3>🍊 Dagens citat</h3>
+        <p>"Stay chill." - En vis Capybara</p>
+    </div>
+</section>
+{% endblock %}

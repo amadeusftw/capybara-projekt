@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Prenumerera - Capybara News{% endblock %}
+
+{% block content %}
+<section class="subscribe-section">
+    <div class="subscribe-card">
+        <h1 class="title">Bli en Capybara-vän 🐹</h1>
+        <p class="subtitle">
+            Få de senaste uppdateringarna från gnagarnas värld.
+        </p>
+
+        <form action="{{ url_for('public.subscribe_confirm') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Namn *</label>
+                <input type="text" id="name" name="name" placeholder="Ditt namn" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-postadress *</label>
+                <input type="email" id="email" name="email" placeholder="din@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company">Företag *</label>
+                <input type="text" id="company" name="company" placeholder="Ditt företag" required>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Jobbtitel *</label>
+                <input type="text" id="title" name="title" placeholder="Din titel" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Prenumerera</button>
+        </form>
+
+        <div class="back-link">
+            <a href="{{ url_for('public.index') }}">&larr; Tillbaka till lugnet</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .subscribe-section {
+        padding: 4rem 1rem;
+        display: flex;
+        justify-content: center;
+        background-color: var(--light);
+    }
+
+    .subscribe-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-width: 450px;
+        width: 100%;
+        border-top: 5px solid var(--primary);
+    }
+
+    .title {
+        color: var(--dark);
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .subtitle {
+        color: #777;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: var(--dark);
+    }
+
+    input[type="email"], input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+
+    input:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .back-link a {
+        color: #888;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .back-link a:hover {
+        color: var(--primary);
+    }
+</style>
+{% endblock %}
