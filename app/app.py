@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv  # <--- NYTT: Importera biblioteket för miljövariabler
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy
@@ -7,8 +8,14 @@ from wtforms import StringField, SubmitField, BooleanField, PasswordField
 from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
+# <--- NYTT: Ladda in innehållet från .env-filen direkt
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
+
+# <--- ÄNDRAT: Hämtar nyckeln från .env (med en fallback om den saknas)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'en-fallback-nyckel-om-du-glomt-env')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -32,7 +39,6 @@ class User(UserMixin):
 def load_user(id):
     return User()
 
-# HÄR ÄR ÄNDRINGEN: Custom messages för validering
 class RegForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired(message="Du måste fylla i ditt förnamn!")])
     last_name = StringField('Efternamn', validators=[DataRequired(message="Du måste fylla i ditt efternamn!")])
@@ -68,11 +74,9 @@ def index():
             flash('Välkommen till Capybara-familjen! 🐾', 'success')
             return redirect(url_for('index'))
     
-    # HÄR ÄR ÄNDRINGEN: Fånga upp fel om formuläret inte är giltigt
     elif request.method == 'POST':
         for field, errors in form.errors.items():
             for error in errors:
-                # Visa felet för användaren
                 flash(error, 'warning')
 
     return render_template('index.html', form=form)
@@ -81,9 +85,15 @@ def index():
 def login():
     if request.method == 'POST':
         pw = request.form.get('password')
-        if pw == 'admin123':
+        
+        # <--- ÄNDRAT: Hämtar det riktiga lösenordet från din .env-fil
+        correct_password = os.getenv('ADMIN_PASSWORD')
+
+        # Jämför det inskrivna lösenordet med det hemliga lösenordet
+        if pw == correct_password:
             login_user(User())
             return redirect('/admin')
+        
         flash('Fel lösenord!', 'danger')
     return render_template('login.html')
 

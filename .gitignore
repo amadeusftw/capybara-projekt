@@ -2,3 +2,6 @@ venv/
 __pycache__/
 *.pyc
 instance/
+.env
+**/ .env
+app/.env
