@@ -6,13 +6,46 @@
         <a href="{{ url_for('logout') }}" class="btn btn-outline-danger rounded-pill">Logga ut</a>
     </div>
 
-    <form class="d-flex mb-4" action="{{ url_for('admin') }}" method="GET">
-        <input class="form-control me-2 rounded-pill" type="search" name="q" placeholder="Sök namn eller företag..." value="{{ search_query if search_query }}">
-        <button class="btn btn-outline-success rounded-pill" type="submit">Sök</button>
-        {% if search_query %}
-            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary ms-2 rounded-pill">Rensa</a>
-        {% endif %}
-    </form>
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">🔍 Filtrering</h5>
+            <form action="{{ url_for('admin') }}" method="GET">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label for="first_name" class="form-label">Förnamn</label>
+                        <input type="text" class="form-control rounded-pill" id="first_name" name="first_name" placeholder="T.ex. Anna" value="{{ first_name_filter if first_name_filter }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="last_name" class="form-label">Efternamn</label>
+                        <input type="text" class="form-control rounded-pill" id="last_name" name="last_name" placeholder="T.ex. Andersson" value="{{ last_name_filter if last_name_filter }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="date" class="form-label">Registrerad</label>
+                        <select class="form-select rounded-pill" id="date" name="date">
+                            <option value="">Alla datum</option>
+                            <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Idag</option>
+                            <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Senaste veckan</option>
+                            <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Senaste månaden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="sort" class="form-label">Sortering</label>
+                        <select class="form-select rounded-pill" id="sort" name="sort">
+                            <option value="newest" {% if sort_order == 'newest' %}selected{% endif %}>Senast tillagd</option>
+                            <option value="oldest" {% if sort_order == 'oldest' %}selected{% endif %}>Tidigast tillagd</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8 d-flex align-items-end gap-2">
+                        <button class="btn btn-outline-success rounded-pill" type="submit">Filtrera</button>
+                        <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary rounded-pill">Rensa alla</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">

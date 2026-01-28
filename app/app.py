@@ -82,18 +82,48 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    search_query = request.args.get('q')
-    if search_query:
-        term = f"%{search_query}%"
-        subs = Subscriber.query.filter(
-            (Subscriber.first_name.like(term)) | 
-            (Subscriber.last_name.like(term)) |
-            (Subscriber.email.like(term)) | 
-            (Subscriber.company.like(term))
-        ).all()
-    else:
-        subs = Subscriber.query.order_by(Subscriber.created_at.desc()).all()
-    return render_template('admin.html', subs=subs)
+    from datetime import datetime, timedelta
+    
+    # Get filter parameters
+    first_name_filter = request.args.get('first_name', '').strip()
+    last_name_filter = request.args.get('last_name', '').strip()
+    date_filter = request.args.get('date', '').strip()
+    sort_order = request.args.get('sort', 'newest')
+    
+    # Start with base query
+    query = Subscriber.query
+    
+    # Apply filters
+    if first_name_filter:
+        query = query.filter(Subscriber.first_name.ilike(f"%{first_name_filter}%"))
+    
+    if last_name_filter:
+        query = query.filter(Subscriber.last_name.ilike(f"%{last_name_filter}%"))
+    
+    if date_filter:
+        today = datetime.utcnow().date()
+        
+        if date_filter == 'today':
+            query = query.filter(Subscriber.created_at >= datetime(today.year, today.month, today.day))
+        elif date_filter == 'week':
+            week_ago = today - timedelta(days=7)
+            query = query.filter(Subscriber.created_at >= datetime(week_ago.year, week_ago.month, week_ago.day))
+        elif date_filter == 'month':
+            month_ago = today - timedelta(days=30)
+            query = query.filter(Subscriber.created_at >= datetime(month_ago.year, month_ago.month, month_ago.day))
+    
+    # Apply sorting
+    if sort_order == 'oldest':
+        subs = query.order_by(Subscriber.created_at.asc()).all()
+    else:  # default 'newest'
+        subs = query.order_by(Subscriber.created_at.desc()).all()
+    
+    return render_template('admin.html', 
+                         subs=subs, 
+                         first_name_filter=first_name_filter,
+                         last_name_filter=last_name_filter,
+                         date_filter=date_filter,
+                         sort_order=sort_order)
 
 @app.route('/delete/<int:id>')
 @login_required
