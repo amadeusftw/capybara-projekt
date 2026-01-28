@@ -22,4 +22,6 @@ def test_home_page_loads(client):
 def test_admin_access_denied(client):
     """Testar att man inte kommer in på admin utan inloggning."""
     response = client.get('/admin')
-    assert response.status_code == 401 # Unauthorized eller redirect
+    # Flask-Login redirects unauthenticated users to login page (302)
+    assert response.status_code == 302
+    assert '/login' in response.location
