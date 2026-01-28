@@ -1,67 +1,14 @@
 {% extends "base.html" %}
-
-{% block title %}Tack! - Capybara News{% endblock %}
-
 {% block content %}
-<section class="thank-you-section">
-    <div class="thank-you-card">
-        <div class="icon-circle">✅</div>
-        <h1 class="title">Tack, {{ name }}!</h1>
-        <p class="message">
-            Vi har skrivit upp <strong>{{ email }}</strong> på listan.
-        </p>
-        <p class="note">
-            Nu kan du luta dig tillbaka och ta det lugnt.
-        </p>
-        
-        <br>
-        <a href="{{ url_for('public.index') }}" class="btn-primary" style="display: inline-block; text-decoration: none;">
-            Tillbaka till startsidan
-        </a>
+<div class="row justify-content-center" style="margin-top: 50px;">
+    <div class="col-md-8 text-center">
+        <div class="container-box" style="background: #fff;">
+            <h1 class="display-4 text-success mb-3">Hurra! 🎉</h1>
+            <p class="lead">Tack för att du anmälde dig till nyhetsbrevet.</p>
+            <img src="{{ url_for('static', filename='capybara.gif') }}" class="img-fluid rounded mb-4" style="max-height: 200px;">
+            <br>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary rounded-pill mt-3">Tillbaka till startsidan</a>
+        </div>
     </div>
-</section>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .thank-you-section {
-        padding: 4rem 1rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 50vh;
-    }
-
-    .thank-you-card {
-        background: white;
-        padding: 3rem;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-        border-bottom: 5px solid var(--primary);
-    }
-
-    .icon-circle {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .title {
-        color: var(--dark);
-        margin-bottom: 1rem;
-    }
-
-    .message {
-        font-size: 1.1rem;
-        color: #555;
-    }
-    
-    .note {
-        color: #999;
-        font-size: 0.9rem;
-        margin-bottom: 2rem;
-    }
-</style>
+</div>
 {% endblock %}

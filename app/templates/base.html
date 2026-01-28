@@ -1,243 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Capybara News{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <meta charset="utf-8">
+    <title>CM Corp - Capybara Magic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* --- GRUNDLÄGGANDE STILAR --- */
-        :root {
-            --primary: #4ECDC4;
-            --secondary: #FF6B6B;
-            --dark: #2C3E50;
-            --light: #F7F9FC;
-        }
-
-        body {
-            font-family: 'Fredoka', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light);
-            color: var(--dark);
+        body { 
+            /* Disney/Magisk Gradient */
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            font-family: 'Nunito', sans-serif;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-
-        /* --- MENY --- */
-        nav {
-            background-color: var(--dark);
-            padding: 0.5rem 2rem; /* Lite mindre padding för att loggan tar plats */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        h1, h2, h3, .navbar-brand {
+            font-family: 'Fredoka One', cursive;
+            color: #2c3e50;
         }
-
-        /* Logga och Text Container */
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: white;
-            gap: 10px;
+        /* HÄR ÄR RUTAN SOM SAKNADES PÅ SIDAN: */
+        .container-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 40px;
+            margin-bottom: 40px;
+            border: 4px solid #fff;
         }
-
-        .nav-brand:hover {
-            opacity: 0.9;
-        }
-
-        .nav-logo {
-            height: 50px; /* Lagom storlek för menyn */
-            width: auto;
-            border-radius: 5px;
-        }
-
-        .nav-title {
-            font-size: 1.5rem; 
+        .btn-primary {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
             font-weight: bold;
-        }
-
-        /* Länkar */
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover { color: var(--primary); }
-
-        /* --- FLASH MESSAGES --- */
-        .flash {
-            padding: 1rem;
-            margin: 1rem auto;
-            max-width: 800px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-        /* --- MODAL (POP-UP) STILAR --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            transform: translateY(-50px);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal__close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #999;
-        }
-        .modal__close:hover { color: var(--secondary); }
-
-        /* --- FORM STILAR --- */
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
-        button.btn-primary {
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
             border-radius: 50px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 10px 30px;
+            transition: all 0.3s;
         }
-
-        button.btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        .btn-primary:hover {
+            background-color: #ee5253;
+            transform: scale(1.05);
         }
-
-        /* --- GDPR TOOLTIP --- */
-        .gdpr-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            cursor: help;
+        .navbar {
+            background: rgba(255,255,255,0.8) !important;
+            backdrop-filter: blur(10px);
         }
-
-        .gdpr-tooltip {
-            visibility: hidden;
-            width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 12px;
-            position: absolute;
-            z-index: 10;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.85rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        /* Liten pil på tooltipen */
-        .gdpr-tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-
-        .gdpr-container:hover .gdpr-tooltip {
-            visibility: visible;
-            opacity: 1;
+        .capy-img {
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 100%;
+            height: auto;
         }
     </style>
-
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav>
-        <a href="{{ url_for('public.index') }}" class="nav-brand">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="CM Corp Logo" class="nav-logo">
-            <span class="nav-title">CM Corp</span>
-        </a>
-
-        <div class="nav-links">
-            <a href="{{ url_for('public.index') }}">Start</a>
-            
-            {% if session.get('is_admin') %}
-                <a href="{{ url_for('admin_bp.admin_dashboard') }}">Admin Dashboard</a>
-                <a href="{{ url_for('admin_bp.logout') }}" style="color: #FF6B6B;">Logga ut</a>
-            {% else %}
-                <a href="{{ url_for('admin_bp.login') }}">Admin Login</a>
-            {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">🐹 CM Corp</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link fw-bold" href="{{ url_for('index') }}">Hem</a>
+            <a class="nav-link fw-bold" href="{{ url_for('login') }}">Admin</a>
         </div>
+      </div>
     </nav>
-
-    {% block content %}{% endblock %}
-
-    <footer style="text-align: center; padding: 2rem; margin-top: auto; color: #888; font-size: 0.9rem;">
-        &copy; 2026 Capybara Media Corp 🐹
-    </footer>
-
-    {% block scripts %}{% endblock %}
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-3 text-center shadow-sm rounded-pill">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

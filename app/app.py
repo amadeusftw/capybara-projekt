@@ -7,22 +7,10 @@ from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
-# --- HÄR ÄR FIXEN ---
-# 1. Ta reda på var denna fil (app.py) ligger
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-# 2. Peka ut var templates-mappen ligger relativt till denna fil
-template_dir = os.path.join(basedir, 'templates')
-
-# 3. Starta appen med den specifika template-mappen
-app = Flask(__name__, template_folder=template_dir)
-
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
-
-# 4. Jag uppdaterade databas-sökvägen också så den alltid hamnar i samma mapp som app.py
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'cm_corp.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# --------------------
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -45,23 +33,20 @@ def load_user(id):
     return User()
 
 class RegForm(FlaskForm):
-    first_name = StringField('Förnamn', validators=[DataRequired(message="Du måste fylla i ditt förnamn!")])
-    last_name = StringField('Efternamn', validators=[DataRequired(message="Du måste fylla i ditt efternamn!")])
-    email = StringField('E-post', validators=[
-        DataRequired(message="E-post är obligatoriskt!"),
-        Email(message="Ogiltig e-post! Har du glömt @-tecknet?")
-    ])
-    company = StringField('Företag', validators=[DataRequired(message="Vilket företag jobbar du på?")])
-    title = StringField('Titel', validators=[DataRequired(message="Vad är din titel?")])
-    gdpr = BooleanField('GDPR', validators=[DataRequired(message="Du måste godkänna att vi äger din själ (GDPR)!")])
-    submit = SubmitField('JAG VILL VARA MED!')
+    first_name = StringField('Förnamn', validators=[DataRequired(message="Fyll i namn!")])
+    last_name = StringField('Efternamn', validators=[DataRequired(message="Fyll i efternamn!")])
+    email = StringField('E-post', validators=[DataRequired(), Email(message="Ogiltig e-post!")])
+    company = StringField('Företag', validators=[DataRequired()])
+    title = StringField('Titel', validators=[DataRequired()])
+    gdpr = BooleanField('Jag godkänner att CM Corp lagrar mina uppgifter', validators=[DataRequired()])
+    submit = SubmitField('JAG VILL VARA MED! 🚀')
 
 @app.route('/', methods=['GET','POST'])
 def index():
     form = RegForm()
     if form.validate_on_submit():
         if Subscriber.query.filter_by(email=form.email.data).first():
-            flash('Du är redan med i klubben!', 'warning')
+            flash('Du är redan registrerad!', 'warning')
         else:
             new_sub = Subscriber(
                 first_name=form.first_name.data,
@@ -72,29 +57,27 @@ def index():
             )
             db.session.add(new_sub)
             db.session.commit()
-            flash('Välkommen till Capybara-familjen! 🐾', 'success')
-            return redirect(url_for('index'))
-    elif request.method == 'POST':
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(error, 'warning')
-
+            # Skicka till den dedikerade tack-sidan
+            return redirect(url_for('tack'))
     return render_template('index.html', form=form)
+
+@app.route('/tack')
+def tack():
+    return render_template('thank_you.html')
 
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        pw = request.form.get('password')
-        if pw == 'admin123':
+        if request.form.get('password') == 'admin123':
             login_user(User())
-            return redirect('/admin')
+            return redirect(url_for('admin'))
         flash('Fel lösenord!', 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect('/')
+    return redirect(url_for('index'))
 
 @app.route('/admin')
 @login_required
@@ -115,11 +98,11 @@ def admin():
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
-    user_to_delete = Subscriber.query.get_or_404(id)
-    db.session.delete(user_to_delete)
+    sub = Subscriber.query.get_or_404(id)
+    db.session.delete(sub)
     db.session.commit()
-    flash('Prenumerant raderad.', 'info')
-    return redirect('/admin')
+    flash('Prenumerant raderad.', 'success')
+    return redirect(url_for('admin'))
 
 if __name__ == '__main__':
     with app.app_context():

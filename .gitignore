@@ -1,7 +1,44 @@
+# Virtual Environment
 venv/
+env/
+ENV/
+
+# Python Cache & Compiled Files
 __pycache__/
 *.pyc
-instance/
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment Variables
 .env
-**/ .env
-app/.env
+.env.local
+.env.*.local
+
+# Database Files
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build & Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
