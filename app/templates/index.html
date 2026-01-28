@@ -63,7 +63,10 @@
 
                 <div class="mb-4 form-check text-center">
                     <div class="d-inline-block text-start">
-                        {{ form.gdpr(class="form-check-input") }}
+                        <div class="gdpr-checkbox-wrapper">
+                            {{ form.gdpr(class="form-check-input") }}
+                            <div class="gdpr-tooltip">Genom att markera denna ruta godkänner jag att CM Corp kommer att äga mina uppgifter för all evighet.</div>
+                        </div>
                         {{ form.gdpr.label(class="form-check-label") }}
                     </div>
                 </div>
