@@ -39,7 +39,7 @@ class RegForm(FlaskForm):
     company = StringField('Företag', validators=[DataRequired()])
     title = StringField('Titel', validators=[DataRequired()])
     gdpr = BooleanField('Jag godkänner att CM Corp lagrar mina uppgifter', validators=[DataRequired()])
-    submit = SubmitField('JAG VILL VARA MED! 🚀')
+    submit = SubmitField('Ja, skicka mig Capybaraaas!')
 
 @app.route('/', methods=['GET','POST'])
 def index():
