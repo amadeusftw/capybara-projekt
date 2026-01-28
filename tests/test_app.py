@@ -17,7 +17,7 @@ def test_home_page_loads(client):
     """Testar att startsidan laddar korrekt (Status 200)."""
     response = client.get('/')
     assert response.status_code == 200
-    assert b"CM CORP" in response.data
+    assert b"Bli en Capybara-VIP" in response.data
 
 def test_admin_access_denied(client):
     """Testar att man inte kommer in på admin utan inloggning."""
