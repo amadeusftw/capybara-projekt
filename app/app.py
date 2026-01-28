@@ -68,7 +68,8 @@ def tack():
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        if request.form.get('password') == 'admin123':
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
+        if request.form.get('password') == admin_password:
             login_user(User())
             return redirect(url_for('admin'))
         flash('Fel lösenord!', 'danger')
