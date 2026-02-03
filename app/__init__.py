@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -11,7 +12,7 @@ from .config import config
 db = SQLAlchemy()
 
 
-def create_app(config_name: str | None = None) -> Flask:
+def create_app(config_name: Optional[str] = None) -> Flask:
     # Om ingen config anges, använd 'development' som standard
     if config_name is None:
         config_name = os.environ.get("FLASK_ENV", "development")
