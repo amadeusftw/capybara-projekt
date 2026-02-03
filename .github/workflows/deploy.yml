@@ -21,27 +21,18 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Get ACR Server
-        run: |
-          ACR_SERVER=$(az acr show --name ${{ vars.ACR_NAME }} --query loginServer -o tsv)
-          echo "ACR_SERVER=$ACR_SERVER" >> $GITHUB_ENV
-
       - name: Build and push container image
         run: |
           az acr build \
-            --registry ${{ vars.ACR_NAME }} \
+            --registry acremilie8457 \
             --image capybara-app:${{ github.sha }} \
             --file Dockerfile .
 
       - name: Deploy to Azure Container Apps
         run: |
+          ACR_SERVER=$(az acr show --name acremilie8457 --query loginServer -o tsv)
           az containerapp up \
-            --name ${{ vars.CONTAINER_APP }} \
-            --resource-group ${{ vars.RESOURCE_GROUP }} \
+            --name ca-capybara-app \
+            --resource-group rg-capybara-emilie-sandbox \
             --image $ACR_SERVER/capybara-app:${{ github.sha }} \
             --registry-server $ACR_SERVER \
-            --registry-username ${{ secrets.REGISTRY_USERNAME }} \
-            --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
-            --ingress external \
-            --target-port 5000 \
-            --environment-variables FLASK_ENV=production
