@@ -1,7 +1,6 @@
 import os
 
 from flask import Flask
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 # Vi importerar config-inställningarna vi skapade i steg 2
@@ -10,7 +9,6 @@ from .config import config
 # --- HÄR ÄR DET VIKTIGA TILLÄGGET ---
 # Skapa extension-objekten utanför funktionen (Module level)
 db = SQLAlchemy()
-migrate = Migrate()
 
 
 def create_app(config_name: str | None = None) -> Flask:
@@ -35,11 +33,10 @@ def create_app(config_name: str | None = None) -> Flask:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
 
     # --- INITIALISERA DATABASEN ---
-    # Koppla ihop db och migrate med just denna app-instans
+    # Koppla ihop db med just denna app-instans
     db.init_app(app)
-    migrate.init_app(app, db)
 
-    # Importera modeller så att Flask-Migrate hittar dem
+    # Importera modeller 
     # (Vi gör detta efter db.init_app för att undvika cirkulära import-fel)
     from .data import models  # noqa: F401
 
