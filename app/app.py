@@ -7,9 +7,12 @@ from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cm_corp.db'
+
+# Use environment variable for database path, default to temp directory in production
+db_path = os.environ.get('DATABASE_PATH', '/tmp/cm_corp.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -135,7 +138,14 @@ def delete(id):
     flash('Prenumerant raderad.', 'success')
     return redirect(url_for('admin'))
 
+# Initialize database on startup
+def init_db():
+    try:
+        with app.app_context():
+            db.create_all()
+    except Exception as e:
+        print(f"Warning: Could not initialize database: {e}")
+
+init_db()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
