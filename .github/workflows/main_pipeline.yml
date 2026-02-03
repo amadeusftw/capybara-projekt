@@ -23,4 +23,8 @@ jobs:
         pip install -r requirements.txt
         
     - name: Install pytest
-        pytest
+      run: pip install pytest
+      
+    - name: Run Tests (Pytest)
+      run: |
+        export PYTHONPATH=$PYTHONPATH:.
