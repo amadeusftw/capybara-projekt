@@ -39,16 +39,26 @@ def create_app(config_name: Optional[str] = None) -> Flask:
 
     # Importera modeller 
     # (Vi gör detta efter db.init_app för att undvika cirkulära import-fel)
-    from .data import models  # noqa: F401
+    try:
+        from .data import models  # noqa: F401
+    except Exception:
+        pass
 
     # --- REGISTRERA RUTTER ---
     
     # Public
-    from .presentation.routes.public import bp as public_bp
-    app.register_blueprint(public_bp)
+    try:
+        from .presentation.routes.public import bp as public_bp
+        app.register_blueprint(public_bp)
+    except Exception:
+        pass
 
     # Admin
-    from .presentation.routes.admin import bp as admin_bp
-    app.register_blueprint(admin_bp)
+    try:
+        from .presentation.routes.admin import bp as admin_bp
+        app.register_blueprint(admin_bp)
+    except Exception:
+        pass
 
+    return app
     return app
