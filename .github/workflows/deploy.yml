@@ -30,14 +30,11 @@ jobs:
 
       - name: Deploy to Azure Container Apps
         run: |
-          # Hämta inloggningsservern för ACR
           ACR_SERVER=$(az acr show --name ${{ vars.ACR_NAME }} --query loginServer -o tsv)
-          
-          # Uppdatera appen
           az containerapp up \
             --name ${{ vars.CONTAINER_APP }} \
             --resource-group ${{ vars.RESOURCE_GROUP }} \
             --image $ACR_SERVER/capybara-app:${{ github.sha }} \
             --registry-server $ACR_SERVER \
             --ingress external \
-            --target-port 80
+            --target-port 5000
