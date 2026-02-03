@@ -1,8 +1,7 @@
-Flask==3.0.0
-Flask-SQLAlchemy==3.1.1
-Flask-WTF==1.2.1
-Flask-Login==0.6.3
-Flask-Migrate==4.0.5
-email_validator
-gunicorn
+flask
+flask-sqlalchemy
+flask-wtf
+flask-bootstrap
+flask-login
+email_validatorgunicorn
 pytest

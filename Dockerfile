@@ -1,21 +1,14 @@
-# Använd en Python-miljö
 FROM python:3.9-slim
-
-# Sätt arbetskatalogen
 WORKDIR /code
-
-# Kopiera allt till containern
 COPY . .
-
-# Installera beroenden (Flask, etc)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Öppna port 5000
-EXPOSE 5000
-
-# Berätta var appen finns och att den ska lyssna på alla IP-adresser
+# Viktigt: Sätt PYTHONPATH så den hittar mappen 'app'
+ENV PYTHONPATH=/code
 ENV FLASK_APP=app/app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
-# Starta appen
-CMD ["flask", "run", "--port=5000"]
+EXPOSE 5000
+
+# Vi kör flask direkt. Detta skapar db via din 'with app.app_context()' i app.py
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
