@@ -5,14 +5,16 @@
     <div class="col-lg-8">
         <div class="container-box">
             <div class="text-center mb-4">
-                <img src="{{ url_for('static', filename='capybara.gif') }}" class="capy-img mb-3" style="max-height: 250px;">
+                <img src="{{ url_for('static', filename='capybara.gif') }}" alt="En animerad kapybara som tuggar" class="capy-img mb-3" style="max-height: 250px;">
                 <h1>Bli en Capybara-VIP! ✨</h1>
                 <p class="lead text-muted">Nyhetsbrevet för dig som älskar världens största gnagare!</p>
             </div>
 
             <div class="mb-4 text-center">
                 <h2 class="mb-3">Allt du behöver veta om naturens egen soffpotatis</h2>
-                <h4 class="text-muted mb-3">Älskar du "coconut doggies"? Då har du kommit helt rätt.</h4>
+                
+                <h3 class="h4 text-muted mb-3">Älskar du "coconut doggies"? Då har du kommit helt rätt.</h3>
+                
                 <p class="lead mb-4">Det här är Sveriges (kanske världens) bästa nyhetsbrev om kapybaror.</p>
                 
                 <p class="mb-3">
@@ -61,13 +63,19 @@
                     </div>
                 </div>
 
-                <div class="mb-4 form-check text-center">
+                <div class="mb-4 text-center">
                     <div class="d-inline-block text-start">
-                        <div class="gdpr-checkbox-wrapper">
-                            {{ form.gdpr(class="form-check-input") }}
-                            <div class="gdpr-tooltip">Genom att markera denna ruta godkänner jag att CM Corp kommer att äga mina uppgifter för all evighet.</div>
+                        <div class="form-check">
+                            {{ form.gdpr(class="form-check-input", id="gdpr_check", **{'aria-describedby': 'gdpr-help'}) }}
+                            
+                            <label class="form-check-label" for="gdpr_check">
+                                Jag godkänner villkoren
+                            </label>
+                            
+                            <div id="gdpr-help" class="form-text text-muted small mt-1">
+                                Genom att markera denna ruta godkänner jag att CM Corp kommer att äga mina uppgifter för all evighet.
+                            </div>
                         </div>
-                        {{ form.gdpr.label(class="form-check-label") }}
                     </div>
                 </div>
 

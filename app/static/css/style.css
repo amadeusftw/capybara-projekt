@@ -1,0 +1,6 @@
+body {
+    cursor: url('/static/images/capybara-cursor.png'), auto;
+}
+a, button, .btn, .form-check-input {
+    cursor: pointer;
+}
