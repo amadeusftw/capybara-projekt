@@ -65,14 +65,10 @@
 
                 <div class="mb-4 text-center">
                     <div class="d-inline-block text-start">
-                        <div class="form-check">
-                            {{ form.gdpr(class="form-check-input", id="gdpr_check", **{'aria-describedby': 'gdpr-help'}) }}
-                            
-                            <label class="form-check-label" for="gdpr_check">
-                                Jag godkänner villkoren
-                            </label>
-                            
-                            <div id="gdpr-help" class="form-text text-muted small mt-1">
+                        <div class="gdpr-checkbox-wrapper">
+                            {{ form.gdpr(class="form-check-input", id="gdpr_check") }}
+                            <label class="form-check-label ms-2" for="gdpr_check">Jag godkänner villkoren</label>
+                            <div class="gdpr-tooltip">
                                 Genom att markera denna ruta godkänner jag att CM Corp kommer att äga mina uppgifter för all evighet.
                             </div>
                         </div>
