@@ -10,9 +10,22 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
 
-# Use environment variable for database path, default to temp directory in production
-db_path = os.environ.get('DATABASE_PATH', '/tmp/cm_corp.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# Use environment variable for database path; pick a sensible default per OS
+default_db = '/tmp/cm_corp.db' if os.name != 'nt' else os.path.join(os.getcwd(), 'cm_corp.db')
+db_path = os.environ.get('DATABASE_PATH', default_db)
+
+# Normalize to absolute path and ensure parent directory exists so SQLite can open the file
+db_path = os.path.abspath(db_path)
+db_dir = os.path.dirname(db_path)
+if db_dir:
+    try:
+        os.makedirs(db_dir, exist_ok=True)
+    except Exception as e:
+        print(f"Warning: Could not create database directory '{db_dir}': {e}")
+
+# On Windows the path may contain backslashes; normalize to forward slashes for the URI
+db_path = db_path.replace('\\', '/')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
