@@ -1,7 +1,5 @@
 """Authentication business logic service."""
 from sqlalchemy.exc import IntegrityError
-from app.data.repositories.user_repository import UserRepository
-from app.data.models.user import User
 
 
 class DuplicateUsernameError(Exception):
@@ -34,13 +32,15 @@ class AuthService:
         Returns:
             User instance if credentials are valid and user is active, None otherwise.
         """
-        from app.app import db
-        repository = UserRepository(db)
-        user = repository.get_by_username(username)
+        from app.app import app, User
         
-        if user and user.is_active and user.check_password(password):
-            return user
-        return None
+        # Ensure we're in the app context
+        with app.app_context():
+            user = User.query.filter_by(username=username).first()
+            
+            if user and user.is_active and user.check_password(password):
+                return user
+            return None
 
     @staticmethod
     def create_user(username, password):
@@ -57,19 +57,20 @@ class AuthService:
         Raises:
             DuplicateUsernameError: If username already exists.
         """
-        from app.app import db
-        repository = UserRepository(db)
+        from app.app import app, db, User
         
-        user = User(username=username)
-        user.set_password(password)
-        
-        try:
-            db.session.add(user)
-            db.session.commit()
-            return user
-        except IntegrityError:
-            db.session.rollback()
-            raise DuplicateUsernameError(f"Username '{username}' already exists")
+        # Ensure we're in the app context
+        with app.app_context():
+            user = User(username=username)
+            user.set_password(password)
+            
+            try:
+                db.session.add(user)
+                db.session.commit()
+                return user
+            except IntegrityError:
+                db.session.rollback()
+                raise DuplicateUsernameError(f"Username '{username}' already exists")
 
     @staticmethod
     def get_user_by_id(user_id):
@@ -82,6 +83,8 @@ class AuthService:
         Returns:
             User instance or None if not found.
         """
-        from app.app import db
-        repository = UserRepository(db)
-        return repository.get_by_id(user_id)
+        from app.app import app, User
+        
+        # Ensure we're in the app context
+        with app.app_context():
+            return User.query.get(user_id)

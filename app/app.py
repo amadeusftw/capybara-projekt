@@ -9,6 +9,11 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
 
 # Use environment variable for database path; pick a sensible default per OS
 default_db = '/tmp/cm_corp.db' if os.name != 'nt' else os.path.join(os.getcwd(), 'cm_corp.db')
@@ -67,7 +72,10 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     """Load user from database by ID for Flask-Login."""
-    return User.query.get(int(user_id))
+    try:
+        return User.query.get(int(user_id))
+    except Exception:
+        return None
 
 class RegForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired(message="Fyll i namn!")])
