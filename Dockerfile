@@ -15,5 +15,9 @@ ENV FLASK_ENV=production
 
 EXPOSE 5000
 
-# Run gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "wsgi:app"]
+# Copy and set up entrypoint script
+COPY entrypoint.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
+
+# Run entrypoint script which handles DB init and admin seeding
+ENTRYPOINT ["/code/entrypoint.sh"]

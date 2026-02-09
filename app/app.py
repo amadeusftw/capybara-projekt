@@ -42,7 +42,7 @@ class Subscriber(db.Model):
     title = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """Admin user model with password authentication."""
     __tablename__ = 'user'
     
@@ -64,13 +64,10 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-class SimpleUser(UserMixin):
-    """Placeholder user for flask-login compatibility."""
-    id = 1
-
 @login_manager.user_loader
-def load_user(id):
-    return SimpleUser()
+def load_user(user_id):
+    """Load user from database by ID for Flask-Login."""
+    return User.query.get(int(user_id))
 
 class RegForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired(message="Fyll i namn!")])
@@ -173,6 +170,16 @@ def delete(id):
     flash('Prenumerant raderad.', 'success')
     return redirect(url_for('admin'))
 
+# Security headers
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to response."""
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
+
 # Initialize database on startup
 def init_db():
     try:
@@ -182,6 +189,43 @@ def init_db():
         print(f"Warning: Could not initialize database: {e}")
 
 init_db()
+
+# Register blueprints (delayed to avoid circular imports)
+def register_blueprints():
+    from app.presentation.routes.public import bp as public_bp
+    from app.presentation.routes.admin import bp as admin_bp
+    from app.presentation.routes.auth import auth_bp
+    
+    app.register_blueprint(public_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(auth_bp)
+
+register_blueprints()
+
+# CLI command for creating admin users
+@app.cli.command()
+def create_admin():
+    """Create a new admin user from the command line (idempotent)."""
+    import sys
+    import click
+    from app.business.services import AuthService
+    from app.business.services.auth_service import DuplicateUsernameError
+    
+    # Interactive prompts for username and password
+    username = click.prompt('Enter username', type=str)
+    password = click.prompt('Enter password', type=str, hide_input=True, confirmation_prompt=True)
+    
+    try:
+        user = AuthService.create_user(username, password)
+        click.secho(f'✅ Admin user "{username}" created successfully!', fg='green')
+        sys.exit(0)
+        
+    except DuplicateUsernameError:
+        click.secho(f'ℹ️  Admin user already exists (idempotent - not an error)', fg='yellow')
+        sys.exit(0)  # Exit 0 for idempotent behavior
+    except Exception as e:
+        click.secho(f'❌ Error creating admin user: {str(e)}', fg='red')
+        sys.exit(1)
 
 if __name__ == '__main__':
     app.run(debug=True)

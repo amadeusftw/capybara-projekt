@@ -70,8 +70,13 @@
         <h1 class="mb-4">📊 Prenumeranter</h1>
         
         {% if subscribers %}
-            <div class="subscriber-count">
-                <strong>Totalt:</strong> {{ count }} prenumeranter
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div class="subscriber-count">
+                    <strong>Totalt:</strong> {{ count }} prenumeranter
+                </div>
+                <a href="{{ url_for('admin_bp.export_csv') }}" class="btn btn-sm btn-outline-success" style="border-radius: 20px; padding: 8px 20px; font-weight: bold; text-decoration: none; display: inline-block;">
+                    📥 Export to CSV
+                </a>
             </div>
             
             <div class="table-responsive">

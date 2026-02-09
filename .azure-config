@@ -1,0 +1,6 @@
+# Azure Configuration for Capybara Newsletter App
+RESOURCE_GROUP="capybara-rg"
+CA_NAME="capybara-newsletter"
+REGISTRY_NAME="capybarargistry"
+IMAGE_NAME="capybara-newsletter"
+ACR_LOGIN_SERVER="capybarargistry.azurecr.io"
