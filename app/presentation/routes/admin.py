@@ -1,6 +1,8 @@
 import os
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
-from app.data.storage import subscribers 
+from app.data.storage import subscribers
+from app.business.services import SubscriptionService
+from app.app import db
 
 bp = Blueprint("admin_bp", __name__, url_prefix="/admin")
 
@@ -67,3 +69,28 @@ def delete_subscriber():
         flash("Kunde inte hitta prenumeranten.", "error")
         
     return redirect(url_for("admin_bp.admin_dashboard"))
+
+
+# --- 5. SUBSCRIBERS LIST (Using Service/Repository Pattern) ---
+@bp.route("/subscribers", methods=["GET"])
+def subscribers_list():
+    """
+    Display all subscribers using the three-layer architecture.
+    Route → Service → Repository → Model
+    """
+    if not session.get("is_admin"):
+        flash("Vänligen logga in för att se denna sida.", "error")
+        return redirect(url_for("admin_bp.login"))
+    
+    try:
+        service = SubscriptionService(db)
+        subscribers_data = service.get_all_subscribers()
+        count = service.get_subscriber_count()
+        return render_template("subscribers.html", 
+                             subscribers=subscribers_data, 
+                             count=count)
+    except Exception as e:
+        flash(f"Ett fel inträffade: {str(e)}", "error")
+        return render_template("subscribers.html", 
+                             subscribers=[], 
+                             count=0)

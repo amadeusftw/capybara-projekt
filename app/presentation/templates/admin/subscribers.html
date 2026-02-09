@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .admin-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .subscriber-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .subscriber-table thead {
+        background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+    }
+    
+    .subscriber-table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 700;
+        color: #2c3e50;
+        border-bottom: 3px solid #5fb878;
+    }
+    
+    .subscriber-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e0e0e0;
+        color: #555;
+    }
+    
+    .subscriber-table tbody tr:hover {
+        background-color: #f5f9ff;
+        transition: all 0.2s ease;
+    }
+    
+    .subscriber-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .subscriber-count {
+        font-size: 0.95em;
+        color: #666;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    
+    .no-subscribers {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+    
+    .no-subscribers h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .subscriber-row-actions {
+        font-size: 0.85em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="admin-section">
+        <h1 class="mb-4">📊 Prenumeranter</h1>
+        
+        {% if subscribers %}
+            <div class="subscriber-count">
+                <strong>Totalt:</strong> {{ count }} prenumeranter
+            </div>
+            
+            <div class="table-responsive">
+                <table class="subscriber-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Namn</th>
+                            <th>Företag</th>
+                            <th>Titel</th>
+                            <th>Registrerad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subscriber in subscribers %}
+                        <tr>
+                            <td><code>{{ subscriber.email }}</code></td>
+                            <td>{{ subscriber.first_name }} {{ subscriber.last_name }}</td>
+                            <td>{{ subscriber.company }}</td>
+                            <td>{{ subscriber.title }}</td>
+                            <td>
+                                {% if subscriber.created_at %}
+                                    {{ subscriber.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-subscribers">
+                <h3>Inga prenumeranter ännu 🦫</h3>
+                <p>Börja samla prenumeranter genom att dela länken till nyhetsbrevet!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

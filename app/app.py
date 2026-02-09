@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -10,15 +10,29 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
 
-# Use environment variable for database path, default to temp directory in production
-db_path = os.environ.get('DATABASE_PATH', '/tmp/cm_corp.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# Use environment variable for database path; pick a sensible default per OS
+default_db = '/tmp/cm_corp.db' if os.name != 'nt' else os.path.join(os.getcwd(), 'cm_corp.db')
+db_path = os.environ.get('DATABASE_PATH', default_db)
+
+# Normalize to absolute path and ensure parent directory exists so SQLite can open the file
+db_path = os.path.abspath(db_path)
+db_dir = os.path.dirname(db_path)
+if db_dir:
+    try:
+        os.makedirs(db_dir, exist_ok=True)
+    except Exception as e:
+        print(f"Warning: Could not create database directory '{db_dir}': {e}")
+
+# On Windows the path may contain backslashes; normalize to forward slashes for the URI
+db_path = db_path.replace('\\', '/')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+# Models defined here for backward compatibility
 class Subscriber(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50))
@@ -28,12 +42,35 @@ class Subscriber(db.Model):
     title = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class User(UserMixin):
+class User(db.Model):
+    """Admin user model with password authentication."""
+    __tablename__ = 'user'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(256), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+
+    def set_password(self, password):
+        """Hash and store the password."""
+        from werkzeug.security import generate_password_hash
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verify password against hash."""
+        from werkzeug.security import check_password_hash
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+class SimpleUser(UserMixin):
+    """Placeholder user for flask-login compatibility."""
     id = 1
 
 @login_manager.user_loader
 def load_user(id):
-    return User()
+    return SimpleUser()
 
 class RegForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired(message="Fyll i namn!")])
@@ -73,7 +110,7 @@ def login():
     if request.method == 'POST':
         admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
         if request.form.get('password') == admin_password:
-            login_user(User())
+            login_user(SimpleUser())
             return redirect(url_for('admin'))
         flash('Fel lösenord!', 'danger')
     return render_template('login.html')
@@ -86,8 +123,6 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    from datetime import datetime, timedelta
-    
     # Get filter parameters
     first_name_filter = request.args.get('first_name', '').strip()
     last_name_filter = request.args.get('last_name', '').strip()
@@ -148,4 +183,5 @@ def init_db():
 
 init_db()
 
-if __name__ == '__main__':    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
