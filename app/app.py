@@ -8,10 +8,11 @@ from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
-app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
 
-# Use environment variable for database path, default to temp directory in production
-db_path = os.environ.get('DATABASE_PATH', '/tmp/cm_corp.db')
+app.config['SECRET_KEY'] = 'hemlig-nyckel-123'
+# Sätt databasens sökväg till användarens hemkatalog (Windows-vänligt)
+default_db_path = os.path.join(os.path.expanduser('~'), 'cm_corp.db')
+db_path = os.environ.get('DATABASE_PATH', default_db_path)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
