@@ -30,24 +30,48 @@ def logout():
 
 # --- 3. ADMIN DASHBOARD ---
 @bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 def admin_dashboard():
-    from app.data.storage import subscribers
-    
+    from app.app import db, Subscriber
     if not session.get("is_admin"):
         flash("Vänligen logga in för att se denna sida.", "error")
         return redirect(url_for("admin_bp.login"))
 
-    search_query = request.args.get("search", "").lower()
-    
-    if search_query:
-        filtered_data = [
-            person for person in subscribers 
-            if search_query in person['name'].lower() or search_query in person['email'].lower()
-        ]
-    else:
-        filtered_data = subscribers
+    # Filtrering
+    first_name_filter = request.args.get("first_name", "").strip()
+    last_name_filter = request.args.get("last_name", "").strip()
+    title_filter = request.args.get("title", "").strip()
+    sort_order = request.args.get("sort", "newest")
 
-    return render_template("admin.html", subscribers=filtered_data)
+    query = Subscriber.query
+    if first_name_filter:
+        query = query.filter(Subscriber.first_name.ilike(f"%{first_name_filter}%"))
+    if last_name_filter:
+        query = query.filter(Subscriber.last_name.ilike(f"%{last_name_filter}%"))
+    if title_filter:
+        query = query.filter(Subscriber.title.ilike(f"%{title_filter}%"))
+
+    # Sortering
+    if sort_order == "first_name":
+        query = query.order_by(Subscriber.first_name.asc())
+    elif sort_order == "last_name":
+        query = query.order_by(Subscriber.last_name.asc())
+    elif sort_order == "title":
+        query = query.order_by(Subscriber.title.asc())
+    elif sort_order == "oldest":
+        query = query.order_by(Subscriber.created_at.asc())
+    else:  # newest
+        query = query.order_by(Subscriber.created_at.desc())
+
+    subs = query.all()
+    return render_template(
+        "admin.html",
+        subs=subs,
+        first_name_filter=first_name_filter,
+        last_name_filter=last_name_filter,
+        title_filter=title_filter,
+        sort_order=sort_order
+    )
 
 # --- 4. NY FUNKTION: TA BORT PRENUMERANT ---
 @bp.route("/delete", methods=["POST"])

@@ -10,3 +10,5 @@ class SubscriptionForm(FlaskForm):
     title = StringField('Titel')
     gdpr = BooleanField('GDPR', validators=[DataRequired()])
     submit = SubmitField('Prenumerera')
+
+from app.presentation.forms import SubscriptionForm
