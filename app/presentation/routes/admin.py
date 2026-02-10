@@ -4,39 +4,16 @@ from flask_login import login_required, current_user
 
 bp = Blueprint("admin_bp", __name__, url_prefix="/admin")
 
-# --- 1. LOGIN RUTT ---
-@bp.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        input_password = request.form.get("password")
-        correct_password = os.environ.get("ADMIN_PASSWORD") or "admin123"
+## Removed legacy login route. Use /auth/login instead.
 
-        if input_password == correct_password:
-            session["is_admin"] = True 
-            flash("Välkommen Admin! Du är inloggad. 🕵️‍♂️", "success")
-            return redirect(url_for("admin_bp.admin_dashboard"))
-        else:
-            flash(f"Fel lösenord! (Tips: Prova 'admin123')", "error")
-            return redirect(url_for("admin_bp.login"))
-
-    return render_template("login.html")
-
-# --- 2. LOGOUT RUTT ---
-@bp.route("/logout")
-def logout():
-    session.pop("is_admin", None)
-    flash("Du har loggat ut.", "success")
-    return redirect(url_for("public.index"))
+## Removed legacy logout route. Use /auth/logout instead.
 
 # --- 3. ADMIN DASHBOARD ---
 @bp.route("/", methods=["GET"])
 @bp.route("", methods=["GET"])
+@login_required
 def admin_dashboard():
     from app.app import db, Subscriber
-    if not session.get("is_admin"):
-        flash("Vänligen logga in för att se denna sida.", "error")
-        return redirect(url_for("admin_bp.login"))
-
     # Filtrering
     first_name_filter = request.args.get("first_name", "").strip()
     last_name_filter = request.args.get("last_name", "").strip()
@@ -155,12 +132,10 @@ def export_csv():
                 sub.title,
                 sub.created_at.strftime('%Y-%m-%d %H:%M:%S') if sub.created_at else ''
             ])
-        
         # Create response
         output.seek(0)
         timestamp = datetime.utcnow().strftime('%Y%m%d')
         filename = f'subscribers-{timestamp}.csv'
-        
         return Response(
             output.getvalue(),
             mimetype='text/csv',
@@ -170,7 +145,4 @@ def export_csv():
         )
     except Exception as e:
         flash(f"Error exporting CSV: {str(e)}", "error")
-        return redirect(url_for("admin_bp.subscribers_list"))
-    except Exception as e:
-        flash(f"Export failed: {str(e)}", "error")
         return redirect(url_for("admin_bp.subscribers_list"))

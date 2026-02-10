@@ -7,7 +7,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
-# from flask import datetimeformat  # TA BORT DENNA RAD
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
