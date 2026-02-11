@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, send_file
 from flask_login import login_required
-from app.extensions import db  # HÄR ÄR NYCKELN TILL LÖSNINGEN
+from app.extensions import db
+import io
+from openpyxl import Workbook
 
 bp = Blueprint("admin_bp", __name__, url_prefix="/admin")
 
-# --- ADMIN DASHBOARD (Här finns filtreringen!) ---
+# --- ADMIN DASHBOARD ---
 @bp.route("/", methods=["GET"])
 @bp.route("", methods=["GET"])
 @login_required
@@ -40,7 +42,6 @@ def admin_dashboard():
 
     subs = query.all()
     
-    # Rendera admin.html som har filtrerings-fälten
     return render_template(
         "admin.html",
         subs=subs,
@@ -50,11 +51,10 @@ def admin_dashboard():
         sort_order=sort_order
     )
 
-# --- CSV EXPORT (Valfritt, men bra att ha kvar) ---
+# --- CSV EXPORT (Gammal) ---
 @bp.route("/export/csv", methods=["GET"])
 @login_required
 def export_csv():
-    import io
     import csv
     from flask import Response
     from app.models import Subscriber
@@ -73,4 +73,37 @@ def export_csv():
         output.getvalue(),
         mimetype='text/csv',
         headers={'Content-Disposition': 'attachment; filename=subscribers.csv'}
+    )
+
+# --- NY EXCEL EXPORT (Här är det nya!) ---
+@bp.route("/export/excel", methods=["GET"])
+@login_required
+def export_excel():
+    from app.models import Subscriber
+    
+    # Skapa arbetsbok
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Prenumeranter"
+
+    # Rubriker
+    ws.append(['ID', 'Förnamn', 'Efternamn', 'E-post', 'Företag', 'Titel', 'Skapad Datum'])
+
+    # Hämta data och skriv rader
+    subs = Subscriber.query.all()
+    for sub in subs:
+        # Vi gör om datumet till sträng för att undvika excel-trassel, eller skickar objektet
+        created_at_str = sub.created_at.strftime('%Y-%m-%d %H:%M') if sub.created_at else ""
+        ws.append([sub.id, sub.first_name, sub.last_name, sub.email, sub.company, sub.title, created_at_str])
+
+    # Spara till minnet (IO)
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return send_file(
+        output,
+        download_name="prenumeranter.xlsx",
+        as_attachment=True,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
