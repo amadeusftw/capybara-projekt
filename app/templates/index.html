@@ -12,7 +12,6 @@
 
             <div class="mb-4 text-center">
                 <h2 class="mb-3">Bli en del av Capybara-familjen</h2>
-               <!-- <h4 class="text-muted mb-3">Naturens egen soffpotatis behöver dina ögon!</h4>-->
                 <p class="lead mb-4">Prenumerera på <strong>CapybaraCorp</strong> och få de senaste uppdateringarna direkt i din inbox.</p>
                 
                 <h5 class="mb-3">
@@ -26,13 +25,6 @@
                 <p class="mb-4">
                     Vår mission är att sprida <strong>Capybara Magic</strong> till alla hörn av internet - vi är här för dig.
                 </p>
-
-                <!--<h5 class="mb-3">Varför prenumerera på CapybaraCorp?</h5>
-                <ul class="list-unstyled mb-4">
-                    <li class="mb-2">🏆 <strong>Handplockat innehål:</strong> Vi kuraterar det bästa capybara-materialet för dig.</li>
-                    <li class="mb-2">🧠 <strong>Bli expert:</strong> Imponera dina vänner med kapybara-fakta och visdom.</li>
-                    <li>💌 <strong>Bara goodvibes:</strong> Noll spam, bara ren capybara-magi i din inbox.</li>
-                </ul>-->
             </div>
 
             <form method="POST">
@@ -42,26 +34,41 @@
                     <div class="col-md-6 mb-3">
                         {{ form.first_name.label(class="form-label fw-bold") }}
                         {{ form.first_name(class="form-control") }}
+                        {% for error in form.first_name.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="col-md-6 mb-3">
                         {{ form.last_name.label(class="form-label fw-bold") }}
                         {{ form.last_name(class="form-control") }}
+                        {% for error in form.last_name.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="mb-3">
                     {{ form.email.label(class="form-label fw-bold") }}
                     {{ form.email(class="form-control") }}
+                    {% for error in form.email.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         {{ form.company.label(class="form-label fw-bold") }}
                         {{ form.company(class="form-control") }}
+                        {% for error in form.company.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="col-md-6 mb-3">
                         {{ form.title.label(class="form-label fw-bold") }}
                         {{ form.title(class="form-control") }}
+                        {% for error in form.title.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -72,6 +79,12 @@
                             <div class="gdpr-tooltip">Genom att markera denna ruta godkänner jag att CM Corp kommer att äga mina uppgifter för all evighet.</div>
                         </div>
                         {{ form.gdpr.label(class="form-check-label") }}
+                        
+                        {% for error in form.gdpr.errors %}
+                            <div class="text-danger small mt-1 d-block">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
 
