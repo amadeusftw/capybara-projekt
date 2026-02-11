@@ -1,0 +1,37 @@
+# --- Samma som gitignore ---
+venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
+.env.local
+.env.*.local
+instance/
+*.db
+*.sqlite
+*.sqlite3
+.DS_Store
+Thumbs.db
+*.lnk
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- VIKTIGT TILLÄGG FÖR DOCKER ---
+.git
+.gitignore
+Dockerfile
+entrypoint.sh
+README.md
