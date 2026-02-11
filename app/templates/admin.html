@@ -1,75 +1,63 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="container-box">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>👑 Admin Dashboard</h2>
-        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger rounded-pill">Logga ut</a>
+        <h2 class="text-primary"><i class="fas fa-crown"></i> Admin Dashboard</h2>
+        <div>
+            <a href="{{ url_for('admin_bp.export_csv') }}" class="btn btn-success rounded-pill me-2">Ladda ner CSV</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger rounded-pill">Logga ut</a>
+        </div>
     </div>
 
-    <!-- Filter & Sort Form -->
-    <div class="container mb-4 p-4 bg-white rounded-4 shadow-sm border border-2" style="max-width: 900px;">
-        <form action="{{ url_for('admin_bp.admin_dashboard') }}" method="GET">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label for="first_name" class="form-label fw-bold">Förnamn</label>
-                    <input type="text" class="form-control rounded-pill" id="first_name" name="first_name" placeholder="T.ex. Anna" value="{{ first_name_filter }}">
-                </div>
-                <div class="col-md-3">
-                    <label for="last_name" class="form-label fw-bold">Efternamn</label>
-                    <input type="text" class="form-control rounded-pill" id="last_name" name="last_name" placeholder="T.ex. Andersson" value="{{ last_name_filter }}">
-                </div>
-                <div class="col-md-3">
-                    <label for="title" class="form-label fw-bold">Titel</label>
-                    <input type="text" class="form-control rounded-pill" id="title" name="title" placeholder="T.ex. VD" value="{{ title_filter }}">
-                </div>
-                <div class="col-md-3">
-                    <label for="sort" class="form-label fw-bold">Sortera efter</label>
-                    <select class="form-select rounded-pill" id="sort" name="sort">
-                        <option value="newest" {% if sort_order == 'newest' %}selected{% endif %}>Senast tillagd</option>
-                        <option value="oldest" {% if sort_order == 'oldest' %}selected{% endif %}>Tidigast tillagd</option>
-                        <option value="first_name" {% if sort_order == 'first_name' %}selected{% endif %}>Förnamn (A-Ö)</option>
-                        <option value="last_name" {% if sort_order == 'last_name' %}selected{% endif %}>Efternamn (A-Ö)</option>
-                        <option value="title" {% if sort_order == 'title' %}selected{% endif %}>Titel (A-Ö)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col text-end">
-                    <button class="btn btn-success rounded-pill px-4 me-2" type="submit">Filtrera</button>
-                    <a href="{{ url_for('admin_bp.admin_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">Rensa alla</a>
-                </div>
-            </div>
-        </form>
-    </div>
+    <form method="GET" action="{{ url_for('admin_bp.admin_dashboard') }}" class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
+        <div class="col-md-3">
+            <input type="text" name="first_name" class="form-control" placeholder="Filtrera på förnamn" value="{{ first_name_filter }}">
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="last_name" class="form-control" placeholder="Filtrera på efternamn" value="{{ last_name_filter }}">
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="title" class="form-control" placeholder="Filtrera på titel" value="{{ title_filter }}">
+        </div>
+        <div class="col-md-3 d-grid">
+            <button type="submit" class="btn btn-primary rounded-pill">Sök / Filtrera</button>
+        </div>
+    </form>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">
-            <thead class="table-light">
+            <thead class="table-dark">
                 <tr>
-                    <th>Namn</th>
-                    <th>E-post</th>
-                    <th>Företag</th>
-                    <th>Registrerad</th>
-                    <th>Åtgärd</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Namn</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Företag</th>
+                    <th scope="col">Titel</th>
+                    <th scope="col">Reg. Datum</th>
+                    <th scope="col">Åtgärd</th>
                 </tr>
             </thead>
             <tbody>
-            {% for sub in subs %}
+                {% for sub in subs %}
                 <tr>
+                    <td>{{ sub.id }}</td>
                     <td><strong>{{ sub.first_name }} {{ sub.last_name }}</strong></td>
-                    <td>{{ sub.email }}</td>
-                    <td>{{ sub.company }}<br><span class="badge bg-info text-dark">{{ sub.title }}</span></td>
-                    <td>{{ sub.created_at | datetimeformat }}</td>
+                    <td><a href="mailto:{{ sub.email }}" class="text-decoration-none">{{ sub.email }}</a></td>
+                    <td>{{ sub.company }}</td>
+                    <td><span class="badge bg-info text-dark">{{ sub.title }}</span></td>
+                    <td>{{ sub.created_at|datetimeformat }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('delete_subscriber') }}" style="display:inline;">
-                            <input type="hidden" name="email" value="{{ sub.email }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Säker?');">Radera</button>
-                        </form>
+                        <a href="{{ url_for('delete', id=sub.id) }}" class="btn btn-sm btn-danger rounded-pill" onclick="return confirm('Är du säker på att du vill radera denna prenumerant?');">
+                            Radera
+                        </a>
                     </td>
                 </tr>
-            {% else %}
-                <tr><td colspan="5" class="text-center text-muted py-4">Inga prenumeranter än...</td></tr>
-            {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">Inga prenumeranter hittades... 🍃</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

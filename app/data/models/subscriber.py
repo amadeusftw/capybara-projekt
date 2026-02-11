@@ -2,7 +2,6 @@
 from datetime import datetime
 
 
-class Subscriber:
-    """Subscriber model (will be replaced by db.Model from app.app)."""
-    pass
+
+# Subscriber-modellen finns nu i app/models.py
 

@@ -7,8 +7,7 @@ class SubscriberRepository:
     def __init__(self, db):
         """Initialize repository with database instance."""
         self.db = db
-        # Import Subscriber from app.app to avoid circular imports
-        from app.app import Subscriber
+        from app.models import Subscriber
         self.Subscriber = Subscriber
 
     def get_all(self):
