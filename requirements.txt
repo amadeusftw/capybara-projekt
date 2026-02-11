@@ -8,7 +8,7 @@ et_xmlfile
 Flask
 Flask-Login
 Flask-Migrate
-Flask-SQLAlchemy
+Flask-SQLAlchemy<3.0
 Flask-WTF
 greenlet
 gunicorn
